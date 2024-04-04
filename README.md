@@ -13,7 +13,7 @@ Este projeto consiste no desenvolvimento de um dashboard web de alta complexidad
 <li>Requisitos Funcionais</li>
 <ul>
       <li>Extrair, Transformar e Carregar (ETL): Sistema para extrair, transformar e carregar dados de unidades, concessionárias, contratos e contas;</li>
-      <li>**Relatórios de Consumo: Geração de relatórios de consumo total de água, energia e gás mensal, anual e média;</li>
+      <li>Relatórios de Consumo: Geração de relatórios de consumo total de água, energia e gás mensal, anual e média;</li>
       <li>Alertas de Consumo: Sistema de alertas para identificar consumos acima da média dos últimos 3 meses;</li>
 </ul>
 
@@ -24,7 +24,7 @@ Este projeto consiste no desenvolvimento de um dashboard web de alta complexidad
 
 <p align="right">(<a href="#top">Scroll to top</a>)</p>
 
-## Solution
+## Solução
 
 Nós da equipe Quarks vamos desenvolver um sistema web que irá permitir que o cliente faça o o input dos aquivos brutos com os dados de sua conta e visualize todos os dashbords e relatórios.
 
@@ -53,16 +53,72 @@ Visando solucionar o projeto, o sistema será entregue em quatro sprints:
 
 <p align="right">(<a href="#top">Scroll to top</a>)</p>
 
-## Tecnologias Utilizadas
+## Product Backlog
 
-- **Frontend**: HTML, CSS, JavaScript, React.js
-- **Backend**: Node.js, Express.js, MongoDB
-- **Ferramentas de Visualização de Dados**: D3.js, Chart.js
-- **DevOps**: Docker, Jenkins, Kubernetes
+Para garantir o gerenciamento centralizado de todas as atividades do projeto, estamos utilizando o Jira Software como nossa ferramenta principal de monitoramento de tarefas e acompanhamento de projetos.
 
-## Contribuição
+[Link para o Projeto no Jira](https://gabriel-timoteo-dos-santos.atlassian.net/jira/software/projects/API5/boards/3)
 
-Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue para discutir novas funcionalidades, melhorias ou correções de bugs.
+O projeto será estruturado em 4 épicos, nos quais serão atribuídas as respectivas tarefas relacionadas a cada um desses temas. Essa divisão facilitará a organização e execução de todas as etapas do projeto.
+
+| Épico                  | Tema                      | Sprint        |
+| -----------------------|---------------------------|---------------|
+|1                       | ETL e Integração de Dados | Sprint 1      |
+|2                       | Relatórios de Consumo     | Sprint 2      |
+|3                       | Alertas de Consumo        | Sprint 3      |
+|4                       | DevOps                    | Sprint 4      |
+
+<p align="right">(<a href="#top">Scroll to top</a>)</p>
+
+## Time
+
+| Avatar            							| Student         | Function           		| GitHub                                                      | LinkedIn                                              |
+| -------------------------------------------- | ---------------- | ---------------- | -------------------------------------------------------------- | ----------------------------------------------------- |
+| <img src = "./Documentacao/Team/imgMichael.jpg" width="60" >|__Gabriel Timoteo__| *Product Owner*| [![](https://bit.ly/3f9Xo0P)](https://github.com/Michaelfss/gatimoteo) | [![](https://bit.ly/2P1ZogM)](https://www.linkedin.com/in/gabriel-timoteo-santos) |
+| <img src = "./Documentacao/Team/imgTiago.jpg" width="60" >|__Felipe Augusto__| *Scrum Master*| [![](https://bit.ly/3f9Xo0P)](https://github.com/FelipeASousa) | [![](https://bit.ly/2P1ZogM)]() |
+| <img src = "./Documentacao/Team/imgAldrik.jpg" width="60" >|__Lucas Barcelos__| *Developer Team*| [![](https://bit.ly/3f9Xo0P)](https://github.com/lucassbarcelos) | [![](https://bit.ly/2P1ZogM)]() |
+| <img src = "./Documentacao/Team/imgAna.jpg" width="60" >|__Leonardo Adler__| *Developer Team* | [![](https://bit.ly/3f9Xo0P)](https://github.com/LeoAdlerr)      | [![](https://bit.ly/2P1ZogM)]() |
+| <img src = "./Documentacao/Team/imgEmanuele.jpg" width="60" >|__Daniela Meirelles__| *Developer Team*| [![](https://bit.ly/3f9Xo0P)](https://github.com/DanielaMeirelles) | [![](https://bit.ly/2P1ZogM)]() |
+| <img src = "./Documentacao/Team/imgLuiz.jpg" width="60" >|__Guilherme Alves__ | *Developer Team* | [![](https://bit.ly/3f9Xo0P)](https://github.com/)   | [![](https://bit.ly/2P1ZogM)]() |
+
+<p align="right">(<a href="#top">Scroll to top</a>)</p>
+
+## Tecnologias utilizadas
+<details>
+<summary>Front-End</summary>
+
+* [vue](https://vuejs.org/)
+* [HTML](https://www.w3schools.com/css/)
+* [CSS](https://www.w3schools.com/css/)
+
+</details>
+
+<details>
+<summary>Back-End</summary>
+
+* [Java](https://www.java.com/pt-BR/?msclkid=7faa842eb8f811ecab39772d4c1ae90b)
+
+* [Spring boot](https://spring.io/projects/spring-boot)
+
+</details>
+
+<details>
+<summary>Database</summary>
+
+* [Oracle Autonomous Database](https://www.oracle.com/autonomous-database/)
+</details>
+
+<details>
+<summary>Meetings and Communication</summary>
+
+* [Discord](https://discord.com/?msclkid=b4f5af84b8f811ecbd81c127a0ae68a7)
+
+* [Whatsapp](https://www.whatsapp.com/)
+
+* [Slack](https://slack.com/intl/pt-br/?msclkid=c00e628eb8f811ecaef374bb86d7f056)
+</details>
+
+<p align="right">(<a href="#top">Scroll to top</a>)</p>
 
 ## Licença
 
