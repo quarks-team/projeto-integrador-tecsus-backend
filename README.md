@@ -72,6 +72,12 @@ O projeto será estruturado em 4 épicos, nos quais serão atribuídas as respec
 
 <p align="right">(<a href="#top">Scroll to top</a>)</p>
 
+## Especificações Técnicas do projeto
+
+-----------
+
+<p align="right">(<a href="#top">Scroll to top</a>)</p>
+
 ## Time
 
 | Avatar            							| Student         | Function           		| GitHub                                                      | LinkedIn                                              |
