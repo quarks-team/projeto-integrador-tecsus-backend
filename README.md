@@ -1,73 +1,42 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Dashboard Web de Análise de Faturas de Energia, Água e Gás
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este projeto consiste no desenvolvimento de um dashboard web de alta complexidade para análise e exibição de dados de faturas de energia, água e gás. O objetivo é fornecer insights valiosos para empresas clientes da TecSUS, permitindo a redução de custos e otimização de contratos.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Descrição do Projeto
 
-## Description
+A TecSUS realiza a coleta e processamento de contas de energia, água e gás para diversas empresas dos setores do atacado e varejo. Cada conta coletada precisa ter todos os seus campos digitados e salvos em banco de dados para eventuais consultas e análises técnicas/financeiras que podem trazer ao cliente oportunidades de redução de custos e alteração de contratos. Cada unidade do cliente pode possuir vários contratos (água, energia ou gás), cada contrato pode possuir uma ou mais contas (faturas de água, energia ou gás) por mês. Todos esses contratos estão ligados a uma concessionária de abastecimento. A TecSUS possui uma base de dados de unidades, contratos, contas e concessionárias desestruturada em arquivo texto, a empresa tem interesse em aplicar técnicas de ETL e utilizar ferramentas de visualização de dados do mercado.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Funcionalidades Principais
 
-## Installation
+- **Extrair, Transformar e Carregar (ETL)**: Sistema para extrair, transformar e carregar dados de unidades, concessionárias, contratos e contas.
+- **Relatórios de Consumo**: Geração de relatórios de consumo total de água, energia e gás mensal, anual e média.
+- **Alertas de Consumo**: Sistema de alertas para identificar consumos acima da média dos últimos 3 meses.
 
-```bash
-$ yarn install
-```
+## Requisitos Não Funcionais
 
-## Running the app
+- **Esteira de DevOps**: Implementação de uma esteira de DevOps para garantir integração contínua e entrega contínua do projeto.
 
-```bash
-# development
-$ yarn run start
+## Tecnologias Utilizadas
 
-# watch mode
-$ yarn run start:dev
+- **Frontend**: HTML, CSS, JavaScript, React.js
+- **Backend**: Node.js, Express.js, MongoDB
+- **Ferramentas de Visualização de Dados**: D3.js, Chart.js
+- **DevOps**: Docker, Jenkins, Kubernetes
 
-# production mode
-$ yarn run start:prod
-```
+## Como Executar o Projeto
 
-## Test
+1. Clone este repositório em sua máquina local.
+2. Navegue até o diretório do projeto.
+3. Instale as dependências do frontend e do backend utilizando `npm install`.
+4. Inicie o servidor backend utilizando `npm start`.
+5. Inicie o servidor frontend utilizando `npm start`.
+6. Acesse o aplicativo em seu navegador utilizando o endereço `http://localhost:3000`.
 
-```bash
-# unit tests
-$ yarn run test
+## Contribuição
 
-# e2e tests
-$ yarn run test:e2e
+Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue para discutir novas funcionalidades, melhorias ou correções de bugs.
 
-# test coverage
-$ yarn run test:cov
-```
+## Licença
 
-## Support
+Este projeto está licenciado sob a [MIT License](LICENSE).
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
