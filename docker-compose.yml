@@ -1,0 +1,26 @@
+version: '3.5'
+services:
+  mongo:
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    healthcheck:
+      test: "mongosh 'mongodb://admin:admin@localhost:27017' --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })'"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    ports:
+      - '27017:27017'
+
+  billing-ingestion-service:
+    image: node:18-alpine
+    volumes:
+      - .:/app
+    ports:
+      - 3000:3000
+    entrypoint:
+      - 'sh'
+      - '-c'
+      - 'cd app && yarn start:debug'
