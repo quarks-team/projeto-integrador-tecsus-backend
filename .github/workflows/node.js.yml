@@ -3,102 +3,77 @@ name: NestJS CI/CD
 on:
   push:
     branches:
-      - main  # Adjust this to your main branch name
+      - main  # Trigger on commits to the main branch
   pull_request:
     branches:
-      - main  # Adjust this to your main branch name
+      - main  # Trigger on pull requests to the main branch
 
 jobs:
   setup_and_install_dependencies:
     runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '20.x'
-
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile
-
-    - name: Install NestJS CLI
-      run: yarn add --dev @nestjs/cli
+    outputs:
+      cache-key: ${{ steps.cache-keys.outputs.cache-key }}
     
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/yarn
-        key: ${{ runner.os }}-node-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-node-${{ matrix.node-version }}-yarn-
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Setup complete
-      id: setup_complete
-      run: echo "Setup is complete, ready to proceed"
+      - name: Set up Node.js and cache Yarn dependencies
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.x'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Cache key for dependencies
+        id: cache-keys
+        run: echo "::set-output name=cache-key::${{ runner.os }}-node-20-yarn-${{ hashFiles('**/yarn.lock') }}"
+
+      - name: Setup complete
+        run: echo "Setup is complete, ready to proceed"
 
   build:
     needs: setup_and_install_dependencies
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: ['20.x']
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Restore cached dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/yarn
-        key: ${{ runner.os }}-node-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      - name: Set up Node.js (Caching handled in previous job)
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.x'
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Build the project
+        run: yarn build
 
-    - name: Build
-      run: yarn build
-
-    - name: Cache build artifacts
-      uses: actions/cache@v2
-      with:
-        path: ./dist
-        key: ${{ runner.os }}-node-${{ matrix.node-version }}-nest-build-${{ hashFiles('**/dist/**') }}
+      - name: Cache build artifacts
+        uses: actions/cache@v2
+        with:
+          path: ./dist
+          key: ${{ runner.os }}-node-20-nest-build-${{ hashFiles('**/dist/**') }}
 
   test:
     needs: build
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: ['20.x']
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Restore cached dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/yarn
-        key: ${{ runner.os }}-node-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.x'
 
-    - name: Restore cached build artifacts
-      uses: actions/cache@v2
-      with:
-        path: ./dist
-        key: ${{ runner.os }}-node-${{ matrix.node-version }}-nest-build-${{ hashFiles('**/dist/**') }}
+      - name: Restore cached build artifacts
+        uses: actions/cache@v2
+        with:
+          path: ./dist
+          key: ${{ runner.os }}-node-20-nest-build-${{ hashFiles('**/dist/**') }}
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: Test
-      run: yarn test
+      - name: Test the build
+        run: yarn test
