@@ -16,14 +16,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18.x'
-
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile
-      
     - name: Cache dependencies
       uses: actions/cache@v2
       with:
@@ -31,6 +23,17 @@ jobs:
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-yarn-
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18.x'
+
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+
+    - name: Install NestJS CLI
+      run: yarn add --dev @nestjs/cli
 
     - name: Setup complete
       id: setup_complete
@@ -56,7 +59,7 @@ jobs:
         node-version: '18.x'
 
     - name: Build
-      run: yarn build
+      run: npx nest build
 
   test:
     needs: build
