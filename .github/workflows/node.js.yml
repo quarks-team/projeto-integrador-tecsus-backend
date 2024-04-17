@@ -20,9 +20,9 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.cache/yarn
-        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        key: ${{ runner.os }}-node-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
-          ${{ runner.os }}-yarn-
+          ${{ runner.os }}-node-${{ matrix.node-version }}-yarn-
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
@@ -43,6 +43,10 @@ jobs:
     needs: setup_and_install_dependencies
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: ['18.x']
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -51,25 +55,29 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.cache/yarn
-        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        key: ${{ runner.os }}-node-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '18.x'
+        node-version: ${{ matrix.node-version }}
 
     - name: Build
-      run: yarn build
+      run: npx nest build
 
     - name: Cache build artifacts
       uses: actions/cache@v2
       with:
         path: ./dist
-        key: ${{ runner.os }}-nest-build-${{ hashFiles('**/dist/**') }}
+        key: ${{ runner.os }}-node-${{ matrix.node-version }}-nest-build-${{ hashFiles('**/dist/**') }}
 
   test:
     needs: build
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: ['18.x']
 
     steps:
     - name: Checkout code
@@ -79,18 +87,18 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.cache/yarn
-        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        key: ${{ runner.os }}-node-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
     - name: Restore cached build artifacts
       uses: actions/cache@v2
       with:
         path: ./dist
-        key: ${{ runner.os }}-nest-build-${{ hashFiles('**/dist/**') }}
+        key: ${{ runner.os }}-node-${{ matrix.node-version }}-nest-build-${{ hashFiles('**/dist/**') }}
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '18.x'
+        node-version: ${{ matrix.node-version }}
 
     - name: Test
       run: yarn test
