@@ -5,7 +5,7 @@ export class AppService {
   constructor(
     
   ) {}
-  async getHello(): Promise<string> {
+   getHello(): string {
     return 'Hello World!';
   }
 }
