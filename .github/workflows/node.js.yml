@@ -1,9 +1,6 @@
 name: NestJS CI/CD
 
 on:
-  push:
-    branches:
-      - main  # Adjust this to your main branch name
   pull_request:
     branches:
       - main  # Adjust this to your main branch name
@@ -29,24 +26,3 @@ jobs:
 
     - name: Test
       run: yarn test
-
-  publish:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18.x'
-
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile --ignore-scripts
-
-    - name: Publish to npm
-      run: yarn publish --access public
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
