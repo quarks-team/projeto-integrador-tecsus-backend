@@ -1,4 +1,4 @@
-name: NestJS CI/CD
+name: CI
 
 on:
   push:
@@ -9,6 +9,29 @@ on:
       - main  # Adjust this to your main branch name
 
 jobs:
+  setup_and_install_dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/yarn
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14.x'
+
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+
   build:
     runs-on: ubuntu-latest
 
@@ -16,16 +39,37 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Restore cached dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/yarn
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '18.x'
-
-    - name: Install dependencies
-      run: yarn install
+        node-version: '14.x'
 
     - name: Build
       run: yarn build
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Restore cached dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/yarn
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14.x'
 
     - name: Test
       run: yarn test
