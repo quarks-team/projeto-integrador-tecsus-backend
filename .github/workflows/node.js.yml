@@ -59,7 +59,7 @@ jobs:
         node-version: '18.x'
 
     - name: Build
-      run: npx nest build
+      run: yarn build
 
     - name: Cache build artifacts
       uses: actions/cache@v2
