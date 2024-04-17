@@ -32,7 +32,12 @@ jobs:
     - name: Install dependencies
       run: yarn install --frozen-lockfile
 
+    - name: Setup complete
+      id: setup_complete
+      run: echo "Setup is complete, ready to proceed"
+
   build:
+    needs: setup_and_install_dependencies
     runs-on: ubuntu-latest
 
     steps:
@@ -54,6 +59,7 @@ jobs:
       run: yarn build
 
   test:
+    needs: setup_and_install_dependencies
     runs-on: ubuntu-latest
 
     steps:
