@@ -16,14 +16,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/yarn
-        key: ${{ runner.os }}-node-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-node-${{ matrix.node-version }}-yarn-
-
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
@@ -34,6 +26,14 @@ jobs:
 
     - name: Install NestJS CLI
       run: yarn add --dev @nestjs/cli
+    
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/yarn
+        key: ${{ runner.os }}-node-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node-${{ matrix.node-version }}-yarn-
 
     - name: Setup complete
       id: setup_complete
