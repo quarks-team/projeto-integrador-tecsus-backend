@@ -59,7 +59,7 @@ jobs:
         node-version: '18.x'
 
     - name: Build
-      run: npx nest build
+      run: yarn build
 
   test:
     needs: build
