@@ -1,84 +1,38 @@
-name: CI
+name: NestJS CI/CD
 
 on:
   push:
     branches:
-      - main  # Adjust this to your main branch name
+      - main  # Trigger on commits to the main branch
   pull_request:
     branches:
-      - main  # Adjust this to your main branch name
+      - main  # Trigger on pull requests to the main branch
 
 jobs:
-  setup_and_install_dependencies:
+  build_and_test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code and set up Node.js
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '20.x'
+          cache: 'yarn'
 
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/yarn
-        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-yarn-
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18.x'
+      - name: Build the project
+        run: yarn build
 
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile
+      - name: Cache build artifacts
+        uses: actions/cache@v2
+        with:
+          path: ./dist
+          key: ${{ runner.os }}-node-20-nest-build-${{ hashFiles('**/dist/**') }}
 
-    - name: Install NestJS CLI
-      run: yarn add --dev @nestjs/cli
-
-    - name: Setup complete
-      id: setup_complete
-      run: echo "Setup is complete, ready to proceed"
-
-  build:
-    needs: setup_and_install_dependencies
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Restore cached dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/yarn
-        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-        
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18.x'
-
-    - name: Build
-      run: yarn build
-
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Restore cached dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/yarn
-        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18.x'
-
-    - name: Test
-      run: yarn test
+      - name: Test the build
+        run: yarn test
