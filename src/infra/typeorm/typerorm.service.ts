@@ -8,12 +8,13 @@ export class TypeormService implements TypeOrmOptionsFactory {
   constructor(private readonly configService: ConfigService) {}
 
   async createTypeOrmOptions(): Promise<TypeOrmModuleOptions> {
+    const db = this.configService.get('db');
     return {
       type: 'mysql',
-      host: 'localhost',
+      host: db.host,
       port: 3306,
-      username: 'root',
-      password: 'admin',
+      username: db.username,
+      password: db.password,
       database: 'db',
       entities: getMetadataArgsStorage().tables.map((tbl) => tbl.target),
       autoLoadEntities: true,
