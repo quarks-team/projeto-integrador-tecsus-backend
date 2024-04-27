@@ -1,20 +1,13 @@
-import { ObjectId } from 'mongodb';
-import {
-  Column,
-  Entity,
-  ObjectIdColumn,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'unidade_cliente' })
 export class Unity {
-  @PrimaryGeneratedColumn()
-  @ObjectIdColumn()
-  id: ObjectId;
+  @PrimaryGeneratedColumn({ name: 'unid_cli_id', type: 'bigint' })
+  id: number;
 
-  @Column()
-  name: string;
+  @Column({ name: 'planta' })
+  plant: string;
 
-  @Column()
-  code: string;
+  @Column({ name: 'cnpj' })
+  cnpj: string;
 }

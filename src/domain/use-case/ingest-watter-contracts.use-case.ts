@@ -1,50 +1,39 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Concessionaire } from '../entity/concessionaire.entity';
-import { Contract } from '../entity/contract.entity';
 import { Unity } from '../entity/unity.entity';
-import { WatterContract } from '../request/watter-contract';
-import { MongoRepository } from 'typeorm';
+import { WatterContractPayload } from '../request/watter-contract-payload';
+import { Repository } from 'typeorm';
+import { WatterContract } from '../entity/watter-contract.entity';
 
 export class IngestWatterContract {
   constructor(
-    @InjectRepository(Unity) private readonly unityRepo: MongoRepository<Unity>,
-    @InjectRepository(Concessionaire)
-    private readonly concessionaireRepo: MongoRepository<Concessionaire>,
-    @InjectRepository(Contract)
-    private readonly contractRepo: MongoRepository<Contract>,
+    @InjectRepository(Unity) private readonly unityRepo: Repository<Unity>,
+    @InjectRepository(WatterContract)
+    private readonly contractRepo: Repository<WatterContract>,
   ) {}
-  async execute(watterContracts: WatterContract[]) {
-    const concessionaires: Partial<Concessionaire>[] = [];
-    const contracts: Partial<Contract>[] = [];
+  async execute(watterContracts: WatterContractPayload[]) {
     const unitys: Partial<Unity>[] = [];
+    const contracts: Partial<WatterContract>[] = [];
 
     watterContracts.forEach((contract) => {
-      concessionaires.push({
-        name: contract.Fornecedor,
-        type: contract['Tipo de Consumidor'],
+      contracts.push({
+        name: contract['Nome do Contrato'],
+        code: contract['Código de Ligação (RGI)'],
+        installNumber: contract['Número Instalação'],
+        provider: contract.Fornecedor,
+        cnpj: contract['Campo Extra 3'] ?? contract['Campo Extra 4'],
+        plant: contract.Planta,
       });
 
       unitys.push({
-        name: contract['Nome do Contrato'],
-        code: contract['Código de Ligação (RGI)'],
+        plant: contract.Planta,
+        cnpj: contract['Campo Extra 3'] ?? contract['Campo Extra 4'],
       });
-
-      contracts.push({ contractName: contract['Nome do Contrato'] });
     });
 
-    const unitysCreated = await this.unityRepo.insertMany(unitys);
+    const unitysCreated = await this.unityRepo.save(unitys);
+    console.log(unitysCreated);
 
-    const concessionaireCreated =
-      await this.concessionaireRepo.insertMany(concessionaires);
-
-    let count = 0;
-    const mappedContracs = contracts.map((contract: Contract) => {
-      return {
-        concessionaireId: concessionaireCreated.insertedIds[count],
-        unityId: unitysCreated.insertedIds[count],
-        contractName: contract.contractName,
-      };
-    });
-    await this.contractRepo.insertMany(mappedContracs);
+    const savedContracts = await this.contractRepo.save(contracts);
+    return savedContracts;
   }
 }
