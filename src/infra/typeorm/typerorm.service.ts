@@ -8,16 +8,16 @@ export class TypeormService implements TypeOrmOptionsFactory {
   constructor(private readonly configService: ConfigService) {}
 
   async createTypeOrmOptions(): Promise<TypeOrmModuleOptions> {
-    console.log('AQUIIII', this.configService.get('db'));
     return {
-      type: 'mongodb',
-      url: this.configService.get('db'),
-      database: 'billing-ingestion-service',
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'admin',
+      database: 'db',
       entities: getMetadataArgsStorage().tables.map((tbl) => tbl.target),
       autoLoadEntities: true,
-      useUnifiedTopology: true,
       synchronize: true,
-      useNewUrlParser: false,
       logging: true,
     };
   }
