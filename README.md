@@ -2,7 +2,7 @@
 
 ## Tema
 
-Dashboard Web de Análise de Faturas de Energia, Água e Gás
+Dashboard Web de Análise de Faturas de Energia e Água
 
 ## Contexto
 
