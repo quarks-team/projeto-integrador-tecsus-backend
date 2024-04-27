@@ -7,7 +7,6 @@ export class BillingController {
 
   @Get()
   async putFile(@Query('path') path: string): Promise<string> {
-    console.log(path);
     return await this.service.transform(path);
   }
 }
