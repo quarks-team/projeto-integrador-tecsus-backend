@@ -1,4 +1,4 @@
-export class WatterContract {
+export class WatterContractPayload {
   'Planta': string;
   'Classe': string;
   'Nome do Contrato': string;
@@ -39,4 +39,5 @@ export class WatterContract {
   'Ativado': string;
   'Loja Nova': string;
   'Histórico': string;
+  contractName: string;
 }

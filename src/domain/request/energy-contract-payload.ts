@@ -1,4 +1,4 @@
-export class EnergyContract {
+export class EnergyContractPayload {
   'Planta': string;
   'Classe': string;
   'Nome do Contrato': string;

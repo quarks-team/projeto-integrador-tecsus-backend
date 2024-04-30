@@ -1,18 +1,17 @@
 version: '3.5'
 services:
-  mongo:
-    image: mongo
+
+  mysql:
+    image: mysql:latest
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=admin
-    healthcheck:
-      test: "mongosh 'mongodb://admin:admin@localhost:27017' --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })'"
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
+      MYSQL_ROOT_PASSWORD: admin # Root password
+      MYSQL_DATABASE: db         # Optional: Creates a database
+      MYSQL_USER: admin                 # Optional: Creates a new user
+      MYSQL_PASSWORD: admin     # Password for the new user
     ports:
-      - '27017:27017'
+      - "3306:3306"
+    volumes:
+      - my-db:/var/lib/mysql
 
   billing-ingestion-service:
     image: node:18-alpine
@@ -24,3 +23,6 @@ services:
       - 'sh'
       - '-c'
       - 'cd app && yarn start:debug'
+
+volumes:
+  my-db:

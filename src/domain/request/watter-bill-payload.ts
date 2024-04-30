@@ -1,4 +1,4 @@
-export class WatterBill {
+export class WatterBillPayload {
   'Planta': string;
   'Conta do Mês': string;
   'Série da Nota Fiscal': string;

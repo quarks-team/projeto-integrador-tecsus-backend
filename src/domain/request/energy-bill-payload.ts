@@ -1,4 +1,4 @@
-export class EnergyBill {
+export class EnergyBillPayload {
   'Planta': string;
   'Conta do Mês': string;
   'Série da Nota Fiscal': string;

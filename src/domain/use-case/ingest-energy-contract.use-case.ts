@@ -1,25 +1,26 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Unity } from '../entity/unity.entity';
-import { WatterContractPayload } from '../request/watter-contract-payload';
 import { Repository } from 'typeorm';
-import { WatterContract } from '../entity/watter-contract.entity';
+import { EnergyContractPayload } from '../request/energy-contract-payload';
+import { EnergyContract } from '../entity/energy-contract.entity';
 
-export class IngestWatterContract {
+export class IngestEnergyContract {
   constructor(
     @InjectRepository(Unity) private readonly unityRepo: Repository<Unity>,
-    @InjectRepository(WatterContract)
-    private readonly contractRepo: Repository<WatterContract>,
+    @InjectRepository(EnergyContract)
+    private readonly contractRepo: Repository<EnergyContract>,
   ) {}
-  async execute(watterContracts: WatterContractPayload[]) {
+  async execute(watterContracts: EnergyContractPayload[]) {
     const unitys: Partial<Unity>[] = [];
-    const contracts: Partial<WatterContract>[] = [];
+    const contracts: Partial<EnergyContract>[] = [];
 
     watterContracts.forEach((contract) => {
       contracts.push({
         name: contract['Nome do Contrato'],
-        code: contract['Código de Ligação (RGI)'],
-        installNumber: contract['Número Instalação'],
         provider: contract.Fornecedor,
+        medidorNumber: contract['Número Medidor'],
+        tension: contract['Tensão Contratada (V)'],
+        metricUnity: contract['Unidade Métrica'],
         cnpj: contract['Campo Extra 3'] ?? contract['Campo Extra 4'],
         plant: contract.Planta,
       });
