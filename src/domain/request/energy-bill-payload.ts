@@ -1,148 +1,148 @@
 export class EnergyBillPayload {
-  'Planta': string;
-  'Conta do Mês': string;
-  'Série da Nota Fiscal': string;
-  'Nº Nota Fiscal': string;
-  'Reservado ao Fisco': string;
-  'Chave de Acesso': string;
-  'Data de Vencimento': string;
-  'Emissão': string;
-  'Código de Barras': string;
-  'Leitura Anterior': string;
-  'Leitura Atual': string;
-  'Uso Sist': object;
-  'Consumo PT VD': string;
-  'Consumo FP CAP VD': string;
-  'Consumo FP IND VD': string;
-  'Demanda PT (kW)': string;
-  'Demanda FP CAP (kW)': string;
-  'Demanda FP IND (kW)': string;
-  'Energia R': object;
-  'Energia TE': string;
-  'Energia TE Custo': string;
-  'Demanda Faturada (kW)': string;
-  'Demanda Faturada Custo': string;
-  'Demanda Faturada PT Custo': string;
-  'Demanda Faturada FP Custo': string;
-  'Demanda Ultrapassada (kW)': string;
-  'Demanda Ultrapassada Custo': string;
-  'Demanda Ultrapassada PT Custo': string; // not a duplicate
-  'Demanda Ultrapassada FP Custo': string; // not a duplicate
-  'Dif Fat TUSD CCEE Custo': string; // not a duplicate
-  'Dif Fat ENC CCEE Custo': string; // not a duplicate
-  'Consumo A PT (TUSD) Custo': string; // not a duplicate
-  'Consumo A PT (TE) Custo': string; // not a duplicate
-  'Consumo A FP (TUSD) Custo': string; // not a duplicate
-  'Consumo A FP (TE) Custo': string; // not a duplicate
-  'Consumo Ener': object; // not a duplicate
-  'Custo Ener': object; // not a duplicate
-  'Consumo Decreto PT TUSD': string; // not a duplicate
-  'Custo Decreto PT TUSD': string; // not a duplicate
-  'Consumo Decreto FP TUSD': string; // not a duplicate
-  'Custo Decreto FP TUSD': string; // not a duplicate
-  'Consumo Decreto PT TE': string; // not a duplicate
-  'Custo Decreto PT TE': string; // not a duplicate
-  'Consumo Decreto FP TE': string; // not a duplicate
-  'Custo Decreto FP TE': string; // not a duplicate
-  'Saldo Injetado': string; // not a duplicate
-  'Regime ICMS ACL Custo 1': string; // not a duplicate
-  'Regime ICMS ACL Custo 1A': string; // not a duplicate
-  'Regime ICMS ACL Custo 2': string; // not a duplicate
-  'Regime ICMS ACL Custo 2A': string; // not a duplicate
-  'Regime PIS COFINS ACL Custo 1': string; // not a duplicate
-  'Regime PIS COFINS ACL Custo 1A': string; // not a duplicate
-  'Regime PIS COFINS ACL Custo 2': string; // not a duplicate
-  'Regime PIS COFINS ACL Custo 2A': string; // not a duplicate
-  'Benefício Tarifário Bruto': string; // not a duplicate
-  'Benefício Tarifário Líquido': string; // not a duplicate
-  'Demanda Lei Estadual Custo': string; // not a duplicate
-  'Ufer TE PT Custo': string; // not a duplicate
-  'Ufer FP TE Custo': string; // not a duplicate
-  'ADD Bandeira AM Custo': string; // not a duplicate
-  'ADD Bandeira VM Custo': string; // not a duplicate
-  'ADD Bandeira Escassez': string; // not a duplicate
-  'Encargo de Conexão Custo': string; // not a duplicate
-  'PIS/PASEP Custo': string; // not a duplicate
-  'Desconto PIS/PASEP': string; // not a duplicate
-  'PIS/PASEP JUDICIAL': string; // not a duplicate
-  'COFINS Custo': string; // not a duplicate
-  'Desconto COFINS': string; // not a duplicate
-  'COFINS JUDICIAL': string; // not a duplicate
-  'C de Disp - REN': object; // not a duplicate
-  'PC': object; // not a duplicate
-  'Desconto Juros de mora': string; // not a duplicate
-  'Desconto At': object; // not a duplicate
-  'Cobranças': string; // not a duplicate
-  'COSIP/CIP Custo': string; // not a duplicate
-  'COSIP/CIP REF VCTO': string; // not a duplicate
-  'ICMS': string; // not a duplicate
-  'ICMS JUDICIAL': string; // not a duplicate
-  'Taxa Entrega outra Localidade': string; // not a duplicate
-  'Ressarc': object; // not a duplicate
-  'Devolução Fatura 1': string; // not a duplicate
-  'Devolução Fatura 2': string; // not a duplicate
-  'Devolução Fatura 3': string; // not a duplicate
-  'Devolução Fatura 4': string; // not a duplicate
-  'Devolução Liminar': string; // not a duplicate
-  'Taxa Religue': string; // not a duplicate
-  'Taxa Desligue': string; // not a duplicate
-  'Parcelamento': string; // not a duplicate
-  'Multas REF VCTO': string; // not a duplicate
-  'Juros de Mora REF VCTO': string; // not a duplicate
-  'Atualização Monetária REF VCTO': string; // not a duplicate
-  'Taxa Revisão de Fatura': string; // not a duplicate
-  'Taxa Visita Técnica': string; // not a duplicate
-  'Taxa de Lixo': string; // not a duplicate
-  'Taxa TSV-Emissão de 2° Via': string; // not a duplicate
-  'Tarifa Energia Reativa PT C/ Imposto': string; // not a duplicate
-  'Tarifa Energia Reativa PT S/ Imposto': string; // not a duplicate
-  'Tarifa Energia Reativa FP C/ Imposto': string; // not a duplicate
-  'Tarifa Energia Reativa FP S/ Imposto': string; // not a duplicate
-  'Tarifa Demanda Faturada C/ Imposto': string; // not a duplicate
-  'Tarifa Demanda Faturada S/ Imposto': string; // not a duplicate
-  'Tarifa Demanda LEI C/ Imposto': string; // not a duplicate
-  'Tarifa Demanda LEI S/ Imposto': string; // not a duplicate
-  'Tarifa Consumo PT C/ Imposto': string; // not a duplicate
-  'Tarifa Consumo PT S/ Imposto': string; // not a duplicate
-  'Tarifa Consumo FP C/ Imposto': string; // not a duplicate
-  'Tarifa Consumo FP S/ Imposto': string; // not a duplicate
-  'Tarifa Consumo PT TE C/ Imposto': string; // not a duplicate
-  'Tarifa Consumo PT TE S/ Imposto': string; // not a duplicate
-  'Tarifa Consumo FP TE C/ Imposto': string; // not a duplicate
-  'Tarifa Consumo FP TE S/ Imposto': string; // not a duplicate
-  'Tarifa Uso Sist': object; // not a duplicate
-  'Tarifa Energia TE Custo C/ Imposto': string; // not a duplicate
-  'Tarifa Energia TE Custo S/ Imposto': string; // not a duplicate
-  'Tarifa Demanda Faturada PT C/ Imposto': string; // not a duplicate
-  'Tarifa Demanda Faturada PT S/ Imposto': string; // not a duplicate
-  'Tarifa Demanda Ultrapassada PT C/ Imposto': string; // not a duplicate
-  'Tarifa Demanda Ultrapassada PT S/ Imposto': string; // not a duplicate
-  'Tarifa Demanda Ultrapassada FP C/ Imposto': string; // not a duplicate
-  'Tarifa Demanda Ultrapassada FP S/ Imposto': string; // not a duplicate
-  'Penal': object; // not a duplicate
-  'Crédito na próxima Fat.': string; // not a duplicate
-  'Devolução de pag Duplic.': string; // not a duplicate
-  'Total': string; // not a duplicate
-  'Nível de Informações da Fatura': string; // not a duplicate
-  'Observações': string; // not a duplicate
-  'DIC': string; // not a duplicate
-  'DIC Apurado': string; // not a duplicate
-  'DMIC': string; // not a duplicate
-  'DMIC Apurado': string; // not a duplicate
-  'FIC': string; // not a duplicate
-  'FIC Apurado': string; // not a duplicate
-  'DICRI': string; // not a duplicate
-  'DICRI Apurado': string; // not a duplicate
-  'Total Compra de Energia': string; // not a duplicate
-  'Descrição da Nota': string; // not a duplicate
-  'Fornecedor': string; // not a duplicate
-  'Código de Identificação': string; // not a duplicate
-  'Número Instalação': string; // not a duplicate
-  'Número Medidor': string; // not a duplicate
-  'Número Cliente': string; // not a duplicate
-  'Modalidade': string; // not a duplicate
-  'Código de Ligação (RGI)': string; // not a duplicate
-  'Hidrômetro': string; // not a duplicate
-  'Número Contrato': string; // not a duplicate
-  'Código de Consumidor': string; // not a duplicate
+  'planta': string;
+  'Conta_do_Mês': string;
+  'série_da_Nota_Fiscal': string;
+  'Nº_Nota_Fiscal': string;
+  'reservado_ao_Fisco': string;
+  'Chave_de_Acesso': string;
+  'data_de_Vencimento': string;
+  'emissão': string;
+  'Código_de_Barras': string;
+  'leitura_Anterior': string;
+  'Leitura_Atual': string;
+  'uso_Sist': object;
+  'consumo_PT_VD': string;
+  'Consumo_FP_CAP_VD': string;
+  'consumo_FP_IND_VD': string;
+  'demanda_PT_(kW)': string;
+  'Demanda_FP_CAP_(kW)': string;
+  'demanda_FP_IND_(kW)': string;
+  'energia_R': object;
+  'energia_TE': string;
+  'Energia_TE_Custo': string;
+  'demanda_Faturada_(kW)': string;
+  'demanda_Faturada_Custo': string;
+  'Demanda_Faturada_PT_Custo': string;
+  'demanda_Faturada_FP_Custo': string;
+  'demanda_Ultrapassada_(kW)': string;
+  'Demanda_Ultrapassada_Custo': string;
+  'demanda_Ultrapassada_PT_Custo': string;
+  'Demanda_Ultrapassada_FP_Custo': string;
+  'Dif_Fat_TUSD_CCEE_Custo': string;
+  'dif_Fat_ENC_CCEE_Custo': string;
+  'Consumo_A_PT_(TUSD)_Custo': string;
+  'consumo_A_PT_(TE)_Custo': string;
+  'consumo_A_FP_(TUSD)_Custo': string;
+  'Consumo_A_FP_(TE)_Custo': string;
+  'consumo_Ener': object;
+  'Custo_Ener': object;
+  'consumo_Decreto_PT_TUSD': string;
+  'custo_Decreto_PT_TUSD': string;
+  'consumo_Decreto_FP_TUSD': string;
+  'Custo_Decreto_FP_TUSD': string;
+  'consumo_Decreto_PT_TE': string;
+  'Custo_Decreto_PT_TE': string;
+  'consumo_Decreto_FP_TE': string;
+  'Custo_Decreto_FP_TE': string;
+  'saldo_Injetado': string;
+  'regime_ICMS_ACL_Custo_1': string;
+  'Regime_ICMS_ACL_Custo_1A': string;
+  'regime_ICMS_ACL_Custo_2': string;
+  'Regime_ICMS_ACL_Custo_2A': string;
+  'regime_PIS_COFINS_ACL_Custo_1': string;
+  'Regime_PIS_COFINS_ACL_Custo_1A': string;
+  'regime_PIS_COFINS_ACL_Custo_2': string;
+  'Regime_PIS_COFINS_ACL_Custo_2A': string;
+  'benefício_Tarifário_Bruto': string;
+  'benefício_Tarifário_Líquido': string;
+  'demanda_Lei_Estadual_Custo': string;
+  'ufer_TE_PT_Custo': string;
+  'Ufer_FP_TE_Custo': string;
+  'add_Bandeira_AM_Custo': string;
+  'Add_Bandeira_VM_Custo': string;
+  'add_Bandeira_Escassez': string;
+  'encargo_De_Conexão_Custo': string;
+  'pis_PASEP_Custo': string;
+  'desconto_PIS_PASEP': string;
+  'PIS_PASEP_JUDICIAL': string;
+  'cofins_Custo': string;
+  'desconto_COFINS': string;
+  'COFINS_JUDICIAL': string;
+  'C_de_Disp_-_REN': object;
+  'pc': object;
+  'desconto_Juros_de_Mora': string;
+  'Desconto_At': object;
+  'cobranças': string;
+  'COSIP_CIP_Custo': string;
+  'Cosip_CIP_REF_VCTO': string;
+  'icms': string;
+  'ICMS_Judicial': string;
+  'taxa_Entrega_Outra_Localidade': string;
+  'ressarc': object;
+  'devolução_Fatura_1': string;
+  'Devolução_Fatura_2': string;
+  'devolução_Fatura_3': string;
+  'Devolução_Fatura_4': string;
+  'devolução_Liminar': string;
+  'taxa_Religue': string;
+  'Taxa_Desligue': string;
+  'parcelamento': string;
+  'multas_REF_VCTO': string;
+  'juros_De_Mora_REF_VCTO': string;
+  'atualização_Monetária_REF_VCTO': string;
+  'Taxa_Revisão_De_Fatura': string;
+  'taxa_Visita_Técnica': string;
+  'taxa_De_Lixo': string;
+  'taxa_TSV-Emissão_De_2°_Via': string;
+  'tarifa_Energia_Reativa_PT_C/Imposto': string;
+  'tarifa_Energia_Reativa_PT_S/Imposto': string;
+  'Tarifa_Energia_Reativa_FP_C/Imposto': string;
+  'Tarifa_Energia_Reativa_FP_S/Imposto': string;
+  'Tarifa_Demanda_Faturada_C/Imposto': string;
+  'Tarifa_Demanda_Faturada_S/Imposto': string;
+  'tarifa_Demanda_LEI_C/Imposto': string;
+  'Tarifa_Demanda_LEI_S/Imposto': string;
+  'tarifa_Consumo_PT_C/Imposto': string;
+  'Tarifa_Consumo_PT_S/Imposto': string;
+  'tarifa_Consumo_FP_C/Imposto': string;
+  'Tarifa_Consumo_FP_S/Imposto': string;
+  'tarifa_Consumo_PT_TE_C/Imposto': string;
+  'Tarifa_Consumo_PT_TE_S/Imposto': string;
+  'tarifa_Consumo_FP_TE_C/Imposto': string;
+  'Tarifa_Consumo_FP_TE_S/Imposto': string;
+  'tarifa_Uso_Sist': object;
+  'tarifa_Energia_TE_Custo_C/Imposto': string;
+  'tarifa_Energia_TE_Custo_S/Imposto': string;
+  'tarifa_Demanda_Faturada_PT_C/Imposto': string;
+  'Tarifa_Demanda_Faturada_PT_S/Imposto': string;
+  'Tarifa_Demanda_Ultrapassada_PT_C/Imposto': string;
+  'tarifa_Demanda_Ultrapassada_PT_S/Imposto': string;
+  'Tarifa_Demanda_Ultrapassada_FP_C/Imposto': string;
+  'Tarifa_Demanda_Ultrapassada_FP_S/Imposto': string;
+  'penal': object;
+  'crédito_Na_Próxima_Fat.': string;
+  'Devolução_De_Pag_Duplic.': string;
+  'total': string;
+  'nível_De_Informações_Da_Fatura': string;
+  'observações': string;
+  'dic': string;
+  'DIC_Apurado': string;
+  'DMIC': string;
+  'DMIC_Apurado': string;
+  'FIC': string;
+  'FIC_Apurado': string;
+  'DICRI': string;
+  'DICRI_Apurado': string;
+  'total_Compra_De_Energia': string;
+  'descrição_Da_Nota': string;
+  'fornecedor': string;
+  'código_De_Identificação': string;
+  'número_Instalação': string;
+  'Número_Medidor': string;
+  'Número_Cliente': string;
+  'modalidade': string;
+  'CódigoDeLigação(RGI)': string;
+  'hidrômetro': string;
+  'Número_Contrato': string;
+  'código_De_Consumidor': string;
 }
