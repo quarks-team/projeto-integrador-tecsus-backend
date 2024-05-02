@@ -8,6 +8,10 @@ import { IngestWatterContract } from '../use-case/ingest-watter-contracts.use-ca
 import { IngestEnergyContract } from '../use-case/ingest-energy-contract.use-case';
 import { IngestEnergyBill } from '../use-case/ingest-energy-bill.use-case';
 import { IngestWatterBill } from '../use-case/ingest-watter-bill.use-case';
+import { Unity } from '../entity/unity.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { MergeAndFilterContracts } from './merge-and-filter-contracts.service';
 
 @Injectable()
 export class BillingService {
@@ -16,48 +20,61 @@ export class BillingService {
     private readonly ingestEnergyContract: IngestEnergyContract,
     private readonly ingestEnergyBill: IngestEnergyBill,
     private readonly ingestWatterBill: IngestWatterBill,
+    private readonly mergeAndFilterContracts: MergeAndFilterContracts,
+    @InjectRepository(Unity) private readonly unityRepo: Repository<Unity>,
   ) {}
-  async transform(path: string): Promise<string> {
+
+  async transformAndPersist(path: string): Promise<string> {
     const absolutePath = `${__dirname.substring(0, 57)}/src/files/${path}`;
 
-    let bills = [];
+    let data = [];
 
     await csvToJson()
       .fromFile(absolutePath)
       .then((obj) => {
-        bills = obj;
+        data = obj;
       });
 
     switch (path.substring(0, path.length - 4)) {
       case 'con_agua':
-        const watterContracts: WatterContractPayload[] = bills;
-        await this.ingestWatterContract.execute(watterContracts);
-
+        const waterContracts: WatterContractPayload[] = data;
+        await this.persistWaterContracts(waterContracts);
         break;
       case 'con_energia':
-        const energyContracts: EnergyContractPayload[] = bills;
-        await this.ingestEnergyContract.execute(energyContracts);
+        const energyContracts: EnergyContractPayload[] = data;
+        await this.persistEnergyContracts(energyContracts);
         break;
       case 'pro_energia':
-        const energyBills: EnergyBillPayload[] = bills;
-        await this.ingestEnergyBill.execute(energyBills);
+        const energyBills: EnergyBillPayload[] = data;
+        await this.persistEnergyBills(energyBills);
         break;
       case 'pro_agua':
-        const watterBills: WatterBillPayload[] = bills;
-        await this.ingestWatterBill.execute(watterBills);
+        const waterBills: WatterBillPayload[] = data;
+        await this.persistWaterBills(waterBills);
         break;
     }
-    return 'billing-ingestion: hmm good ingestion';
+    return 'billing-ingestion: Data persisted successfully';
   }
-  parseObj(obj: any[]): any {
-    const first = obj[0];
-    const keys = Object.keys(first);
-    const dictionary = keys.map((key) => {
-      return {
-        key: key,
-        type: typeof first[key],
-      };
-    });
-    return dictionary;
+
+  private async persistWaterContracts(data: WatterContractPayload[]): Promise<void> {
+    const mergedAndFilteredContracts = this.mergeAndFilterContracts.execute(data);
+    const contracts = await this.ingestWatterContract.execute(mergedAndFilteredContracts);
+    // Additional processing or logging if needed
+  }
+
+  private async persistEnergyContracts(data: EnergyContractPayload[]): Promise<void> {
+    const mergedAndFilteredContracts = this.mergeAndFilterContracts.execute(data);
+    const contracts = await this.ingestEnergyContract.execute(mergedAndFilteredContracts);
+    // Additional processing or logging if needed
+  }
+
+  private async persistEnergyBills(data: EnergyBillPayload[]): Promise<void> {
+    const bills = await this.ingestEnergyBill.execute(data);
+    // Additional processing or logging if needed
+  }
+
+  private async persistWaterBills(data: WatterBillPayload[]): Promise<void> {
+    const bills = await this.ingestWatterBill.execute(data);
+    // Additional processing or logging if needed
   }
 }
