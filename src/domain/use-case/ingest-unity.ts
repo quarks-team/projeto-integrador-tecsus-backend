@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Unity } from '../entity/unity.entity';
 import { Repository } from 'typeorm';
 import { EnergyContract } from '../entity/energy-contract.entity';
-import { WaterContract } from '../entity/water-contract.entity';
+import { WaterContract } from '../entity/watter-contract.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
