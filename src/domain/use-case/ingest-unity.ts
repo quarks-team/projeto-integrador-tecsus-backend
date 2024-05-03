@@ -15,8 +15,8 @@ export class MergeAndFilterContracts {
 
   async execute(energyContracts: EnergyContract[], WatterContracts: WatterContract[]) {
     // Remove null fields from specified columns
-    const filteredEnergyContracts = energyContracts.filter((contract) => contract['Campo Extra 3'] && contract['Campo Extra 4'] && contract.Planta);
-    const filteredWatterContracts = WatterContracts.filter((contract) => contract['Campo Extra 3'] && contract['Campo Extra 4'] && contract.Planta);
+    const filteredEnergyContracts = energyContracts.filter((contract) => contract['Campo Extra 3'] && contract['Campo Extra 4'] && contract.plant);
+    const filteredWatterContracts = WatterContracts.filter((contract) => contract['Campo Extra 3'] && contract['Campo Extra 4'] && contract.plant);
 
     // Remove '-', '/', and '.' from specified columns
     filteredEnergyContracts.forEach((contract) => {
@@ -29,7 +29,7 @@ export class MergeAndFilterContracts {
       contract['Campo Extra 4'] = contract['Campo Extra 4'].replace(/[-\/.]/g, '');
     });
 
-    // Creating sets of CNPJ and corresponding 'Planta' for both contracts
+    // Creating sets of CNPJ and corresponding 'plant' for both contracts
     const energyCnpj1Set = new Set(filteredEnergyContracts.map((contract) => [contract['Campo Extra 3'], contract.plant].toString()));
     const waterCnpj1Set = new Set(filteredWatterContracts.map((contract) => [contract['Campo Extra 3'], contract.plant].toString()));
     const energyCnpj2Set = new Set(filteredEnergyContracts.map((contract) => [contract['Campo Extra 4'], contract.plant].toString()));
