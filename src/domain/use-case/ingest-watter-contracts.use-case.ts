@@ -17,18 +17,27 @@ export class IngestWatterContract {
     const contracts: Partial<WatterContract>[] = [];
 
     watterContracts.forEach((contract) => {
+      const mergedCNPJ = this.mergeCNPJs(contract);
       contracts.push({
         name: contract['Nome do Contrato'],
         code: contract['Código de Ligação (RGI)'].replace(/[-\/]/g, ''),
         installNumber: contract['Número Instalação'],
         provider: contract.Fornecedor,
+<<<<<<< Updated upstream
         cnpj: (contract['Campo Extra 3'] ?? contract['Campo Extra 4']).replace(/[-\/]/g, ''),
+=======
+        cnpj: mergedCNPJ,
+>>>>>>> Stashed changes
         plant: contract.Planta,
       });
 
       unitys.push({
         plant: contract.Planta,
+<<<<<<< Updated upstream
         cnpj: (contract['Campo Extra 3'] ?? contract['Campo Extra 4']).replace(/[-\/]/g, ''),
+=======
+        cnpj: mergedCNPJ,
+>>>>>>> Stashed changes
       });
     });
 
@@ -37,5 +46,13 @@ export class IngestWatterContract {
 
     const savedContracts = await this.contractRepo.save(contracts);
     return savedContracts;
+  }
+
+  mergeCNPJs(contract: WatterContractPayload): string {
+    const campoExtra3: string = contract['Campo Extra 3'] || '';
+    const campoExtra4: string = contract['Campo Extra 4'] || '';
+    const mergedList: string = (campoExtra3 + campoExtra4).replace(/[\s\-.;,]/g, '');
+    const uniqueCNPJs: string = [...new Set(mergedList.split(''))].join('');
+    return uniqueCNPJs;
   }
 }
