@@ -1,17 +1,15 @@
-import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Time } from '../entity/time.entity';
 import { EnergyBill } from '../entity/energy-bill.entity';
 import { EnergyBillPayload } from '../request/energy-bill-payload';
+import { Time } from '../entity/time.entity';
 
-@Injectable()
 export class IngestEnergyBill {
   constructor(
     @InjectRepository(Time) private readonly timeRepo: Repository<Time>,
-    @InjectRepository(EnergyBill) private readonly billRepo: Repository<EnergyBill>,
+    @InjectRepository(EnergyBill)
+    private readonly billRepo: Repository<EnergyBill>,
   ) {}
-
   async execute(energyBills: EnergyBillPayload[]) {
     const times: Partial<Time>[] = [];
     const bills: Partial<EnergyBill>[] = [];
@@ -22,10 +20,12 @@ export class IngestEnergyBill {
 
       bills.push({
         month: billDate,
-        instalationNumber: bill['Número Instalação'].replace(/[-\/]/g, ''),
+        instalationNumber: bill['Número Instalação'],
         total: Number.parseInt(bill.Total.replace(',', '')),
         medidorNumber: bill['Número Medidor'],
-        totalConsume: Number.parseInt(bill['Total Compra de Energia'].replace(',', '')),
+        totalConsume: Number.parseInt(
+          bill['Total Compra de Energia'].replace(',', ''),
+        ),
         plant: bill.Planta,
       });
 
@@ -33,13 +33,6 @@ export class IngestEnergyBill {
         month: month.toString(),
         year: year.toString(),
       });
-
-      // Remove commas from individual columns
-      for (const key in bill) {
-        if (Object.prototype.hasOwnProperty.call(bill, key) && key.startsWith('Consumo')) {
-          bill[key] = bill[key].replace(',', '').replace('NaN', '0');
-        }
-      }
     });
 
     await this.timeRepo.save(this.getDistinctObjects(times));
@@ -47,7 +40,6 @@ export class IngestEnergyBill {
     const savedBills = await this.billRepo.save(bills);
     return savedBills;
   }
-
   getDistinctObjects(array) {
     return array.filter(
       (obj, index, self) =>
