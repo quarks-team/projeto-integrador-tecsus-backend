@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import * as csvToJson from 'csvtojson';
-import { WatterContractPayload } from '../request/watter-contract-payload';
-import { EnergyContractPayload } from '../request/energy-contract-payload';
-import { EnergyBillPayload } from '../request/energy-bill-payload';
-import { WatterBillPayload } from '../request/watter-bill-payload';
-import { IngestWatterContract } from '../use-case/ingest-watter-contracts.use-case';
+import { WatterContractPayload } from '../request/watter-contract-payload'; // Changed from 'watter-contract-payload'
+import { EnergyContractPayload } from '../request/energy-contract-payload'; // Changed from 'energy-contract-payload'
+import { EnergyBillPayload } from '../request/energy-bill-payload'; // Changed from 'energy-bill-payload'
+import { WatterBillPayload } from '../request/watter-bill-payload'; // Changed from 'watter-bill-payload'
+import { IngestWatterContract } from '../use-case/ingest-watter-contracts.use-case'; // Changed from 'ingest-watter-contracts.use-case'
 import { IngestEnergyContract } from '../use-case/ingest-energy-contract.use-case';
 import { IngestEnergyBill } from '../use-case/ingest-energy-bill.use-case';
 import { IngestWatterBill } from '../use-case/ingest-watter-bill.use-case';

@@ -1,32 +1,35 @@
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Unity } from '../entity/unity.entity';
 import { WatterContractPayload } from '../request/watter-contract-payload';
 import { Repository } from 'typeorm';
 import { WatterContract } from '../entity/watter-contract.entity';
 
+@Injectable()
 export class IngestWatterContract {
   constructor(
     @InjectRepository(Unity) private readonly unityRepo: Repository<Unity>,
-    @InjectRepository(WatterContract)
-    private readonly contractRepo: Repository<WatterContract>,
+    @InjectRepository(WatterContract) private readonly contractRepo: Repository<WatterContract>,
   ) {}
+
   async execute(watterContracts: WatterContractPayload[]) {
     const unitys: Partial<Unity>[] = [];
     const contracts: Partial<WatterContract>[] = [];
 
     watterContracts.forEach((contract) => {
+      const mergedCNPJ = this.mergeCNPJs(contract);
       contracts.push({
         name: contract['Nome do Contrato'],
-        code: contract['Código de Ligação (RGI)'],
+        code: contract['Código de Ligação (RGI)'].replace(/[-\/]/g, ''),
         installNumber: contract['Número Instalação'],
         provider: contract.Fornecedor,
-        cnpj: contract['Campo Extra 3'] ?? contract['Campo Extra 4'],
+        cnpj: mergedCNPJ,
         plant: contract.Planta,
       });
 
       unitys.push({
         plant: contract.Planta,
-        cnpj: contract['Campo Extra 3'] ?? contract['Campo Extra 4'],
+        cnpj: mergedCNPJ,
       });
     });
 
@@ -35,5 +38,13 @@ export class IngestWatterContract {
 
     const savedContracts = await this.contractRepo.save(contracts);
     return savedContracts;
+  }
+
+  mergeCNPJs(contract: WatterContractPayload): string {
+    const campoExtra3: string = contract['Campo Extra 3'] || '';
+    const campoExtra4: string = contract['Campo Extra 4'] || '';
+    const mergedList: string = (campoExtra3 + campoExtra4).replace(/[\s\-.;,]/g, '');
+    const uniqueCNPJs: string = [...new Set(mergedList.split(''))].join('');
+    return uniqueCNPJs;
   }
 }
