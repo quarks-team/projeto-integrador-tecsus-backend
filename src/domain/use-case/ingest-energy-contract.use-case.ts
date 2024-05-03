@@ -17,31 +17,20 @@ export class IngestEnergyContract {
     const contracts: Partial<EnergyContract>[] = [];
 
     energyContracts.forEach((contract) => {
-<<<<<<< Updated upstream
-=======
       const mergedCNPJ = this.mergeCNPJs(contract);
->>>>>>> Stashed changes
       contracts.push({
         name: contract['Nome do Contrato'],
         provider: contract.Fornecedor,
         medidorNumber: contract['Número Medidor'],
         tension: contract['Tensão Contraatada (V)'],
         metricUnity: contract['Unidade Métrica'],
-<<<<<<< Updated upstream
-        cnpj: (contract['Campo Extra 3'] ?? contract['Campo Extra 4']).replace(/[-\/.]/g, ''),
-=======
         cnpj: mergedCNPJ,
->>>>>>> Stashed changes
         plant: contract.Planta,
       });
 
       unitys.push({
         plant: contract.Planta,
-<<<<<<< Updated upstream
-        cnpj: (contract['Campo Extra 3'] ?? contract['Campo Extra 4']).replace(/[-\/.]/g, ''),
-=======
         cnpj: mergedCNPJ,
->>>>>>> Stashed changes
       });
     });
 

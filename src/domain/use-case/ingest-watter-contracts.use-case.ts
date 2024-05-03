@@ -23,21 +23,13 @@ export class IngestWatterContract {
         code: contract['Código de Ligação (RGI)'].replace(/[-\/]/g, ''),
         installNumber: contract['Número Instalação'],
         provider: contract.Fornecedor,
-<<<<<<< Updated upstream
-        cnpj: (contract['Campo Extra 3'] ?? contract['Campo Extra 4']).replace(/[-\/]/g, ''),
-=======
         cnpj: mergedCNPJ,
->>>>>>> Stashed changes
         plant: contract.Planta,
       });
 
       unitys.push({
         plant: contract.Planta,
-<<<<<<< Updated upstream
-        cnpj: (contract['Campo Extra 3'] ?? contract['Campo Extra 4']).replace(/[-\/]/g, ''),
-=======
         cnpj: mergedCNPJ,
->>>>>>> Stashed changes
       });
     });
 
