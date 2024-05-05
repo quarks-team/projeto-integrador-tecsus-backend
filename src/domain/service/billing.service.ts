@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import * as csvToJson from 'csvtojson';
-import { WatterContractPayload } from '../request/watter-contract-payload'; // Changed from 'watter-contract-payload'
-import { EnergyContractPayload } from '../request/energy-contract-payload'; // Changed from 'energy-contract-payload'
-import { EnergyBillPayload } from '../request/energy-bill-payload'; // Changed from 'energy-bill-payload'
-import { WatterBillPayload } from '../request/watter-bill-payload'; // Changed from 'watter-bill-payload'
-import { IngestWatterContract } from '../use-case/ingest-watter-contracts.use-case'; // Changed from 'ingest-watter-contracts.use-case'
+import { WatterContractPayload } from '../request/watter-contract-payload';
+import { EnergyContractPayload } from '../request/energy-contract-payload';
+import { EnergyBillPayload } from '../request/energy-bill-payload';
+import { WatterBillPayload } from '../request/watter-bill-payload';
+import { IngestWatterContract } from '../use-case/ingest-watter-contracts.use-case';
 import { IngestEnergyContract } from '../use-case/ingest-energy-contract.use-case';
 import { IngestEnergyBill } from '../use-case/ingest-energy-bill.use-case';
 import { IngestWatterBill } from '../use-case/ingest-watter-bill.use-case';
+import * as nodePath from 'path'; // Import path module with a different name
 
 @Injectable()
 export class BillingService {
@@ -17,22 +18,24 @@ export class BillingService {
     private readonly ingestEnergyBill: IngestEnergyBill,
     private readonly ingestWatterBill: IngestWatterBill,
   ) {}
-  async transform(path: string): Promise<string> {
-    const absolutePath = `${__dirname.substring(0, 57)}/src/files/${path}`;
+
+  async transform(fileName: string): Promise<string> {
+    const basePath = __dirname.substring(0, __dirname.indexOf('src')); // Get the base directory
+    const absolutePath = nodePath.join(basePath, 'src', 'files', fileName); // Construct absolute path
 
     let bills = [];
 
-    await csvToJson()
-      .fromFile(absolutePath)
-      .then((obj) => {
-        bills = obj;
-      });
+    try {
+      bills = await csvToJson().fromFile(absolutePath); // Use await with csvToJson().fromFile() directly
+    } catch (error) {
+      console.error("Error reading CSV file:", error);
+      throw new Error("File does not exist. Check to make sure the file path to your CSV is correct.");
+    }
 
-    switch (path.substring(0, path.length - 4)) {
+    switch (fileName.substring(0, fileName.length - 4)) {
       case 'con_agua':
         const watterContracts: WatterContractPayload[] = bills;
         await this.ingestWatterContract.execute(watterContracts);
-
         break;
       case 'con_energia':
         const energyContracts: EnergyContractPayload[] = bills;
@@ -46,9 +49,13 @@ export class BillingService {
         const watterBills: WatterBillPayload[] = bills;
         await this.ingestWatterBill.execute(watterBills);
         break;
+      default:
+        throw new Error("Invalid file name or type.");
     }
+
     return 'billing-ingestion: hmm good ingestion';
   }
+
   parseObj(obj: any[]): any {
     const first = obj[0];
     const keys = Object.keys(first);
