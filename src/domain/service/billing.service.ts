@@ -18,19 +18,14 @@ export class BillingService {
     private readonly ingestEnergyBill: IngestEnergyBill,
     private readonly ingestWatterBill: IngestWatterBill,
   ) {}
-
-  async transform(fileName: string): Promise<string> {
-    const basePath = __dirname.substring(0, __dirname.indexOf('src')); // Get the base directory
-    const absolutePath = nodePath.join(basePath, 'src', 'files', fileName); // Construct absolute path
-
+  async transform(fileName: string, path: string): Promise<string> {
     let bills = [];
 
-    try {
-      bills = await csvToJson().fromFile(absolutePath); // Use await with csvToJson().fromFile() directly
-    } catch (error) {
-      console.error("Error reading CSV file:", error);
-      throw new Error("File does not exist. Check to make sure the file path to your CSV is correct.");
-    }
+    await csvToJson()
+      .fromFile(path)
+      .then((obj) => {
+        bills = obj;
+      });
 
     switch (fileName.substring(0, fileName.length - 4)) {
       case 'con_agua':
@@ -50,7 +45,7 @@ export class BillingService {
         await this.ingestWatterBill.execute(watterBills);
         break;
       default:
-        throw new Error("Invalid file name or type.");
+        throw new Error('Invalid file name or type.');
     }
 
     return 'billing-ingestion: hmm good ingestion';
