@@ -17,18 +17,16 @@ export class BillingService {
     private readonly ingestEnergyBill: IngestEnergyBill,
     private readonly ingestWatterBill: IngestWatterBill,
   ) {}
-  async transform(path: string): Promise<string> {
-    const absolutePath = `${__dirname.substring(0, 57)}/src/files/${path}`;
-
+  async transform(fileName: string, path: string): Promise<string> {
     let bills = [];
 
     await csvToJson()
-      .fromFile(absolutePath)
+      .fromFile(path)
       .then((obj) => {
         bills = obj;
       });
 
-    switch (path.substring(0, path.length - 4)) {
+    switch (fileName.substring(0, fileName.length - 4)) {
       case 'con_agua':
         const watterContracts: WatterContractPayload[] = bills;
         await this.ingestWatterContract.execute(watterContracts);
