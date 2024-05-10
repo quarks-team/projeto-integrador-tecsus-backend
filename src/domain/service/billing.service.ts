@@ -8,6 +8,7 @@ import { IngestWatterContract } from '../use-case/ingest-watter-contracts.use-ca
 import { IngestEnergyContract } from '../use-case/ingest-energy-contract.use-case';
 import { IngestEnergyBill } from '../use-case/ingest-energy-bill.use-case';
 import { IngestWatterBill } from '../use-case/ingest-watter-bill.use-case';
+import * as nodePath from 'path'; // Import path module with a different name
 
 @Injectable()
 export class BillingService {
@@ -30,7 +31,6 @@ export class BillingService {
       case 'con_agua':
         const watterContracts: WatterContractPayload[] = bills;
         await this.ingestWatterContract.execute(watterContracts);
-
         break;
       case 'con_energia':
         const energyContracts: EnergyContractPayload[] = bills;
@@ -44,9 +44,13 @@ export class BillingService {
         const watterBills: WatterBillPayload[] = bills;
         await this.ingestWatterBill.execute(watterBills);
         break;
+      default:
+        throw new Error('Invalid file name or type.');
     }
+
     return 'billing-ingestion: hmm good ingestion';
   }
+
   parseObj(obj: any[]): any {
     const first = obj[0];
     const keys = Object.keys(first);
