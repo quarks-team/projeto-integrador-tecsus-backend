@@ -9,7 +9,7 @@ export class IngestWatterBill {
     @InjectRepository(Time) private readonly timeRepo: Repository<Time>,
     @InjectRepository(WatterBill)
     private readonly billRepo: Repository<WatterBill>,
-  ) {}
+  ) { }
   async execute(watterBills: WatterBillPayload[]) {
     const times: Partial<Time>[] = [];
     const bills: Partial<WatterBill>[] = [];
@@ -40,18 +40,23 @@ export class IngestWatterBill {
         month: month.toString(),
         year: year.toString(),
       });
+      
+      // Check if the billDate already exists in the database
+      const existingTime = times.find(time => time.month === month.toString() && time.year === year.toString());
+
+      if (!existingTime) {
+        // If the date doesn't exist, add it to the times array for insertion
+        times.push({
+          month: month.toString(),
+          year: year.toString(),
+        });
+      }
+      // Otherwise, do nothing because the date already exists
     });
 
-    for (const time of this.getDistinctObjects(times)) {
-      const existsTime = await this.timeRepo.findOne({
-        where: {
-          month: time.month,
-          year: time.year,
-        },
-      });
-      if (!existsTime) {
-        await this.timeRepo.save(time);
-      }
+    // Insert only distinct times into the database
+    if (times.length > 0) {
+      await this.timeRepo.save(this.getDistinctObjects(times));
     }
 
     const savedBills = await this.billRepo.save(bills);
