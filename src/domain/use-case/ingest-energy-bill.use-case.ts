@@ -26,7 +26,7 @@ export class IngestEnergyBill {
 
       if (
         parseFloat(bill['Consumo PT VD'].replace(',', '')) > 0 &&
-        parseFloat(bill['Consumo PT VD'].replace(',', '')) > 0 &&
+        parseFloat(bill['Consumo FP CAP VD'].replace(',', '')) > 0 &&
         parseFloat(bill['Consumo FP IND VD'].replace(',', '')) > 0) {
         bGroupBills.push({
           month: billDate,
