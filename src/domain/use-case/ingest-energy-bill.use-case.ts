@@ -1,20 +1,28 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { EnergyBill } from '../entity/energy-bill.entity';
+import { EnergyBillGroupA } from '../entity/energy-bill-group-a.entity';
+import { EnergyBillGroupB } from '../entity/energy-bill-group-b.entity';
 import { EnergyBillPayload } from '../request/energy-bill-payload';
 import { Time } from '../entity/time.entity';
 
 export class IngestEnergyBill {
   constructor(
     @InjectRepository(Time) private readonly timeRepo: Repository<Time>,
-    @InjectRepository(EnergyBill)
-    private readonly billRepo: Repository<EnergyBill>,
+    @InjectRepository(EnergyBillGroupA)
+    private readonly billGroupARepo: Repository<EnergyBillGroupA>,
+    @InjectRepository(EnergyBillGroupA)
+    private readonly billGroupBRepo: Repository<EnergyBillGroupB>,
   ) {}
   async execute(energyBills: EnergyBillPayload[]) {
     const times: Partial<Time>[] = [];
     const bills: Partial<EnergyBill>[] = [];
 
     energyBills.forEach((bill) => {
+      if(bill from tipo B ==){
+        ingest type b bills
+      } else{
+        ingest type a bills
+      }
       const [day, month, year] = bill['Conta do Mês'].split('/').map(Number);
       const billDate = new Date(year, month - 1, day);
 

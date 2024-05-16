@@ -12,7 +12,7 @@ export class WatterContract {
   code: string;
 
   @Column({ name: 'hidrometro' })
-  cnpj: string;
+  hidrometer: string;
 
   @Column({ name: 'fornecedor_agua' })
   provider: string;

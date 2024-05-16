@@ -4,17 +4,21 @@ import { Unity } from '../entity/unity.entity';
 import { Repository } from 'typeorm';
 import { EnergyContractPayload } from '../request/energy-contract-payload';
 import { EnergyContract } from '../entity/energy-contract.entity';
+import { PlacePlant } from '../entity/place_plant.entity';
 
 @Injectable()
 export class IngestEnergyContract {
   constructor(
     @InjectRepository(Unity) private readonly unityRepo: Repository<Unity>,
     @InjectRepository(EnergyContract) private readonly contractRepo: Repository<EnergyContract>,
+    @InjectRepository(PlacePlant) private readonly placePlantRepo: Repository<PlacePlant>,
   ) {}
 
   async execute(energyContracts: EnergyContractPayload[]) {
     const unitys: Partial<Unity>[] = [];
     const contracts: Partial<EnergyContract>[] = [];
+    const placePlants: Partial<PlacePlant>[] = [];
+
 
     energyContracts.forEach((contract) => {
       const mergedCNPJ = this.mergeCNPJs(contract);
@@ -22,20 +26,30 @@ export class IngestEnergyContract {
         name: contract['Nome do Contrato'],
         provider: contract.Fornecedor,
         medidorNumber: contract['Número Medidor'],
-        tension: contract['Tensão Contraatada (V)'],
-        metricUnity: contract['Unidade Métrica'],
-        cnpj: mergedCNPJ,
-        plant: contract.Planta,
+        instalationNumber: contract['Número Instalação'],
+        pointDemand: Number.parseFloat(
+          contract['Demanda Ponta'].replace(',', '')
+        ),
+        outsidePointDemand: Number.parseFloat(
+          contract['Demanda Fora Ponta'].replace(',', '')
+        )
       });
 
       unitys.push({
-        plant: contract.Planta,
-        cnpj: mergedCNPJ,
+        cnpj: mergedCNPJ
       });
+
+      placePlants.push({
+        plant: contract.Planta
+      });
+
     });
 
     const unitysCreated = await this.unityRepo.save(unitys);
     console.log(unitysCreated);
+
+    const plantsCreated = await this.placePlantRepo.save(placePlants);
+    console.log(plantsCreated);
 
     const savedContracts = await this.contractRepo.save(contracts);
     return savedContracts;
