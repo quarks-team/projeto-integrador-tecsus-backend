@@ -32,8 +32,8 @@ export class WatterBill {
   @Column({ name: 'planta_agua' })
   plant: string;
 
-  /* @Column({ name: 'fornecedor' })
+  @Column({ name: 'fornecedor' })
   provider: string; 
-  conta de agua não possui forncedor, apenas o contrato
-  */
+  //conta de agua não possui forncedor, apenas o contrato
+  
 }
