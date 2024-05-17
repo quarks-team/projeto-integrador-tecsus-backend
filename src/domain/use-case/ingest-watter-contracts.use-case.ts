@@ -25,7 +25,8 @@ export class IngestWatterContract {
         name: contract['Nome do Contrato'],
         code: contract['Código de Ligação (RGI)'].replace(/[-\/]/g, ''),
         hidrometer: contract['Hidrômetro'],
-        provider: contract['Fornecedor']
+        provider: contract['Fornecedor'],
+        cnpj: mergedCNPJ
       });
 
       unitys.push({

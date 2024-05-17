@@ -32,7 +32,8 @@ export class IngestEnergyContract {
         ),
         outsidePointDemand: Number.parseFloat(
           contract['Demanda Fora Ponta'].replace(',', '')
-        )
+        ),
+        cnpj: mergedCNPJ
       });
 
       unitys.push({
