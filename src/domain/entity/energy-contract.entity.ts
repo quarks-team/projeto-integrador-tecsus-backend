@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'contrato_energia' })
 export class EnergyContract {
-  @PrimaryGeneratedColumn({ name: 'contrato_energia_id', type: 'bigint' })
+  @PrimaryGeneratedColumn({ name: 'contrato_energia_id', type: 'int' })
   id: number;
 
   @Column({ name: 'nome_contrato_energia' })
