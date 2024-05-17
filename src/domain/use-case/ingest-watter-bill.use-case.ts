@@ -33,7 +33,8 @@ export class IngestWatterBill {
           bill['Valor Esgoto R$'].replace(',', ''),
         ),
         total: Number.parseFloat(bill['Total R$'].replace(',', '')),
-        plant: bill.Planta,
+        plant: bill.Planta, 
+        provider: "null"
       });
 
       times.push({

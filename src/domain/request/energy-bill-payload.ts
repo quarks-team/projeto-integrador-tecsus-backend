@@ -10,7 +10,7 @@ export class EnergyBillPayload {
   'Código de Barras': string;
   'Leitura Anterior': string;
   'Leitura Atual': string;
-  'Uso Sist': object;
+  'Uso Sist': string;
   'Consumo PT VD': string;
   'Consumo FP CAP VD': string;
   'Consumo FP IND VD': string;
@@ -34,8 +34,8 @@ export class EnergyBillPayload {
   'Consumo A PT (TE) Custo': string;
   'Consumo A FP (TUSD) Custo': string;
   'Consumo A FP (TE) Custo': string;
-  'Consumo Ener': object;
-  'Custo Ener': object;
+  'Consumo Ener': string;
+  'Custo Ener': string;
   'Consumo Decreto PT TUSD': string;
   'Custo Decreto PT TUSD': string;
   'Consumo Decreto FP TUSD': string;
@@ -110,7 +110,7 @@ export class EnergyBillPayload {
   'Tarifa Consumo PT TE S/ Imposto': string;
   'Tarifa Consumo FP TE C/ Imposto': string;
   'Tarifa Consumo FP TE S/ Imposto': string;
-  'Tarifa Uso Sist': object;
+  'Tarifa Uso Sist': string;
   'Tarifa Energia TE Custo C/ Imposto': string;
   'Tarifa Energia TE Custo S/ Imposto': string;
   'Tarifa Demanda Faturada PT C/ Imposto': string;

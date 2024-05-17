@@ -2,27 +2,24 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'contrato_energia' })
 export class EnergyContract {
-  @PrimaryGeneratedColumn({ name: 'contr_energ_id', type: 'bigint' })
+  @PrimaryGeneratedColumn({ name: 'contrato_energia_id', type: 'bigint' })
   id: number;
 
-  @Column({ name: 'nome_contr_energ' })
+  @Column({ name: 'nome_contrato_energia' })
   name: string;
 
-  @Column({ name: 'forne_nome' })
+  @Column({ name: 'fornecedor_energia' })
   provider: string;
 
-  @Column({ name: 'num_medidor' })
+  @Column({ name: 'numero_medidor' })
   medidorNumber: string;
 
-  @Column({ name: 'tensao' })
-  tension: string;
+  @Column({ name: 'numero_instalacao' })
+  instalationNumber: string;
 
-  @Column({ name: 'unid_metric' })
-  metricUnity: string;
+  @Column({ name: 'demanda_ponta' })
+  pointDemand: number;
 
-  @Column({ name: 'cnpj' })
-  cnpj: string;
-
-  @Column({ name: 'planta' })
-  plant: string;
+  @Column({ name: 'demanda_fora_ponta' })
+  outsidePointDemand: number;
 }
