@@ -12,7 +12,7 @@ export class IngestWatterContract {
     @InjectRepository(Unity) private readonly unityRepo: Repository<Unity>,
     @InjectRepository(WatterContract) private readonly contractRepo: Repository<WatterContract>,
     @InjectRepository(PlacePlant) private readonly placePlantRepo: Repository<PlacePlant>,
-  ) {}
+  ) { }
 
   async execute(watterContracts: WatterContractPayload[]) {
     const unitys: Partial<Unity>[] = [];
@@ -52,7 +52,7 @@ export class IngestWatterContract {
   mergeCNPJs(contract: WatterContractPayload): string {
     const campoExtra3: string = contract['Campo Extra 3'] || '';
     const campoExtra4: string = contract['Campo Extra 4'] || '';
-    const mergedList: string = (campoExtra3 + campoExtra4).replace(/[\s\-.;,]/g, '');
+    const mergedList: string = (campoExtra3 + campoExtra4).replace(/[^\d]/g, '');
     const uniqueCNPJs: string = [...new Set(mergedList.split(''))].join('');
     return uniqueCNPJs;
   }

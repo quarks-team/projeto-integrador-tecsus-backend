@@ -59,7 +59,7 @@ export class IngestEnergyContract {
   mergeCNPJs(contract: EnergyContractPayload): string {
     const campoExtra3: string = contract['Campo Extra 3'] || '';
     const campoExtra4: string = contract['Campo Extra 4'] || '';
-    const mergedList: string = (campoExtra3 + campoExtra4).replace(/[\s\-.;,]/g, '');
+    const mergedList: string = (campoExtra3 + campoExtra4).replace(/[^\d]/g, '');
     const uniqueCNPJs: string = [...new Set(mergedList.split(''))].join('');
     return uniqueCNPJs;
   }
