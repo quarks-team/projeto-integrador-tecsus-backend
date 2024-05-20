@@ -36,14 +36,31 @@ export class IngestWatterContract {
       placePlants.push({
         plant: contract.Planta
       });
-
     });
 
-    const unitysCreated = await this.unityRepo.save(unitys);
-    console.log(unitysCreated);
+    for (const unity of this.getDistinctUnitys(unitys)) {
+      const existsUnity = await this.unityRepo.findOne({
+        where: {
+          cnpj: unity.cnpj,
+        },
+      });
+      if (!existsUnity) {
+        const unitysCreated = await this.unityRepo.save(unity);
+        console.log(unitysCreated);
+      }
+    }
 
-    const plantsCreated = await this.placePlantRepo.save(placePlants);
-    console.log(plantsCreated);
+    for (const placePlant of this.getDistinctPlacePlants(placePlants)) {
+      const existsPlacePlant = await this.placePlantRepo.findOne({
+        where: {
+          plant: placePlant.plant,
+        },
+      });
+      if (!existsPlacePlant) {
+        const plantsCreated = await this.placePlantRepo.save(placePlant);
+        console.log(plantsCreated);
+      }
+    }
 
     const savedContracts = await this.contractRepo.save(contracts);
     return savedContracts;
@@ -55,5 +72,19 @@ export class IngestWatterContract {
     const mergedList: string = (campoExtra3 + campoExtra4).replace(/[^\d]/g, '');
     const uniqueCNPJs: string = [...new Set(mergedList.split(''))].join('');
     return uniqueCNPJs;
+  }
+
+  getDistinctUnitys(array) {
+    return array.filter(
+      (obj, index, self) =>
+        index === self.findIndex((t) => t.cnpj === obj.cnpj)
+    );
+  }
+
+  getDistinctPlacePlants(array) {
+    return array.filter(
+      (obj, index, self) =>
+        index === self.findIndex((t) => t.plant === obj.plant)
+    );
   }
 }
