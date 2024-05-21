@@ -22,4 +22,7 @@ export class EnergyContract {
 
   @Column({ name: 'demanda_fora_ponta' })
   outsidePointDemand: number;
+
+  @Column({ name: 'cnpj' })
+  cnpj: string;
 }

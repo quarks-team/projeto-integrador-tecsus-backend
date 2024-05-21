@@ -12,7 +12,7 @@ export class IngestEnergyContract {
     @InjectRepository(Unity) private readonly unityRepo: Repository<Unity>,
     @InjectRepository(EnergyContract) private readonly contractRepo: Repository<EnergyContract>,
     @InjectRepository(PlacePlant) private readonly placePlantRepo: Repository<PlacePlant>,
-  ) {}
+  ) { }
 
   async execute(energyContracts: EnergyContractPayload[]) {
     const unitys: Partial<Unity>[] = [];
@@ -32,7 +32,8 @@ export class IngestEnergyContract {
         ),
         outsidePointDemand: Number.parseFloat(
           contract['Demanda Fora Ponta'].replace(',', '')
-        )
+        ),
+        cnpj: mergedCNPJ
       });
 
       unitys.push({
@@ -42,14 +43,29 @@ export class IngestEnergyContract {
       placePlants.push({
         plant: contract.Planta
       });
-
     });
 
-    const unitysCreated = await this.unityRepo.save(unitys);
-    console.log(unitysCreated);
+    for (const unity of this.getDistinctUnitys(unitys)) {
+      const existsUnity = await this.unityRepo.findOne({
+        where: {
+          cnpj: unity.cnpj,
+        },
+      });
+      if (!existsUnity) {
+        await this.unityRepo.save(unity);
+      }
+    }
 
-    const plantsCreated = await this.placePlantRepo.save(placePlants);
-    console.log(plantsCreated);
+    for (const placePlant of this.getDistinctPlacePlants(placePlants)) {
+      const existsPlacePlant = await this.placePlantRepo.findOne({
+        where: {
+          plant: placePlant.plant,
+        },
+      });
+      if (!existsPlacePlant) {
+        await this.placePlantRepo.save(placePlant);
+      }
+    }
 
     const savedContracts = await this.contractRepo.save(contracts);
     return savedContracts;
@@ -58,8 +74,22 @@ export class IngestEnergyContract {
   mergeCNPJs(contract: EnergyContractPayload): string {
     const campoExtra3: string = contract['Campo Extra 3'] || '';
     const campoExtra4: string = contract['Campo Extra 4'] || '';
-    const mergedList: string = (campoExtra3 + campoExtra4).replace(/[\s\-.;,]/g, '');
+    const mergedList: string = (campoExtra3 + campoExtra4).replace(/[^\d]/g, '');
     const uniqueCNPJs: string = [...new Set(mergedList.split(''))].join('');
     return uniqueCNPJs;
+  }
+
+  getDistinctUnitys(array) {
+    return array.filter(
+      (obj, index, self) =>
+        index === self.findIndex((t) => t.cnpj === obj.cnpj)
+    );
+  }
+
+  getDistinctPlacePlants(array) {
+    return array.filter(
+      (obj, index, self) =>
+        index === self.findIndex((t) => t.plant === obj.plant)
+    );
   }
 }

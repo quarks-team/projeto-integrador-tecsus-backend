@@ -16,4 +16,7 @@ export class WatterContract {
 
   @Column({ name: 'fornecedor_agua' })
   provider: string;
+
+  @Column({ name: 'cnpj' })
+  cnpj: string;
 }
