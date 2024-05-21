@@ -12,13 +12,14 @@ export class IngestEnergyBill {
     private readonly billGroupARepo: Repository<EnergyBillGroupA>,
     @InjectRepository(EnergyBillGroupB)
     private readonly billGroupBRepo: Repository<EnergyBillGroupB>,
-  ) { }
+  ) {}
+
   async execute(energyBills: EnergyBillPayload[]) {
     const times: Partial<Time>[] = [];
     const aGroupBills: Partial<EnergyBillGroupA>[] = [];
     const bGroupBills: Partial<EnergyBillGroupB>[] = [];
 
-    console.log(energyBills);
+    console.log('Energy Bills:', energyBills);
 
     energyBills.forEach((bill) => {
       const [day, month, year] = bill['Conta do Mês'].split('/').map(Number);
@@ -27,7 +28,8 @@ export class IngestEnergyBill {
       if (
         parseFloat(bill['Consumo PT VD'].replace(',', '')) > 0 &&
         parseFloat(bill['Consumo FP CAP VD'].replace(',', '')) > 0 &&
-        parseFloat(bill['Consumo FP IND VD'].replace(',', '')) > 0) {
+        parseFloat(bill['Consumo FP IND VD'].replace(',', '')) > 0
+      ) {
         bGroupBills.push({
           month: billDate,
           total: Number.parseFloat(bill.Total.replace(',', '')),
@@ -35,18 +37,12 @@ export class IngestEnergyBill {
           provider: bill.Fornecedor,
           medidorNumber: bill['Número Medidor'],
           plant: bill.Planta,
-          totalConsume: Number.parseFloat(
-            bill['Consumo PT VD'].replace(',', '')
-          ) +
-            Number.parseFloat(
-              bill['Consumo FP CAP VD'].replace(',', '')
-            ) +
-            Number.parseFloat(
-              bill['Consumo FP IND VD'].replace(',', '')
-            )
-          ,
+          totalConsume:
+            Number.parseFloat(bill['Consumo PT VD'].replace(',', '')) +
+            Number.parseFloat(bill['Consumo FP CAP VD'].replace(',', '')) +
+            Number.parseFloat(bill['Consumo FP IND VD'].replace(',', '')),
           sistDistrUse: 0,
-          sistDistrUseCost: 0
+          sistDistrUseCost: 0,
         });
       } else {
         aGroupBills.push({
@@ -55,36 +51,16 @@ export class IngestEnergyBill {
           instalationNumber: bill['Número Instalação'],
           provider: bill.Fornecedor,
           plant: bill.Planta,
-          ptDemand: Number.parseFloat(
-            bill['Demanda PT (kW)'].replace(',', '')
-          ),
-          fpCapDemand: Number.parseFloat(
-            bill['Demanda FP CAP (kW)'].replace(',', '')
-          ),
-          fpIndDemand: Number.parseFloat(
-            bill['Demanda FP IND (kW)'].replace(',', '')
-          ),
-          ptVdConsume: Number.parseFloat(
-            bill['Consumo PT VD'].replace(',', '')
-          ),
-          fpCapVdConsume: Number.parseFloat(
-            bill['Consumo FP CAP VD'].replace(',', '')
-          ),
-          fpIndVdConsume: Number.parseFloat(
-            bill['Consumo FP IND VD'].replace(',', '')
-          ),
-          aPtTusdConsume: Number.parseFloat(
-            bill['Consumo A PT (TUSD) Custo'].replace(',', '')
-          ),
-          aPtTeConsume: Number.parseFloat(
-            bill['Consumo A PT (TE) Custo'].replace(',', '')
-          ),
-          aFpTusdConsume: Number.parseFloat(
-            bill['Consumo A FP (TUSD) Custo'].replace(',', '')
-          ),
-          aFpTeConsume: Number.parseFloat(
-            bill['Consumo A FP (TE) Custo'].replace(',', '')
-          )
+          ptDemand: Number.parseFloat(bill['Demanda PT (kW)'].replace(',', '')),
+          fpCapDemand: Number.parseFloat(bill['Demanda FP CAP (kW)'].replace(',', '')),
+          fpIndDemand: Number.parseFloat(bill['Demanda FP IND (kW)'].replace(',', '')),
+          ptVdConsume: Number.parseFloat(bill['Consumo PT VD'].replace(',', '')),
+          fpCapVdConsume: Number.parseFloat(bill['Consumo FP CAP VD'].replace(',', '')),
+          fpIndVdConsume: Number.parseFloat(bill['Consumo FP IND VD'].replace(',', '')),
+          aPtTusdConsume: Number.parseFloat(bill['Consumo A PT (TUSD) Custo'].replace(',', '')),
+          aPtTeConsume: Number.parseFloat(bill['Consumo A PT (TE) Custo'].replace(',', '')),
+          aFpTusdConsume: Number.parseFloat(bill['Consumo A FP (TUSD) Custo'].replace(',', '')),
+          aFpTeConsume: Number.parseFloat(bill['Consumo A FP (TE) Custo'].replace(',', '')),
         });
       }
 
@@ -94,62 +70,108 @@ export class IngestEnergyBill {
       });
     });
 
-    const savedTimes = await this.timeRepo.save(this.getDistinctObjects(times));
-    console.log(savedTimes);
+    console.log('Times before saving:', times);
 
-    for (const bBill of this.getDistinctBills(bGroupBills)) {
-      const existsBills = await this.billGroupBRepo.findOne({
-        where: {
-          instalationNumber: bBill.instalationNumber,
-          month: bBill.month,
-          provider: bBill.provider,
-          medidorNumber: bBill.medidorNumber,
-          plant: bBill.plant
-        },
-      });
-      if (!existsBills) {
-        const savedBills = await this.billGroupBRepo.save(bBill);
-        return savedBills;
+    try {
+      const distinctTimes = this.getDistinctObjects(times);
+      console.log('Distinct Times:', distinctTimes);
+      const savedTimes = await this.timeRepo.save(distinctTimes);
+      console.log('Saved Times:', savedTimes);
+    } catch (error) {
+      console.error('Error saving times:', error);
+    }
+
+    const distinctBGroupBills = this.getDistinctBills(bGroupBills);
+    const distinctAGroupBills = this.getDistinctBills(aGroupBills);
+
+    console.log('Distinct B Group Bills:', distinctBGroupBills);
+    console.log('Distinct A Group Bills:', distinctAGroupBills);
+
+    for (const bBill of distinctBGroupBills) {
+      try {
+        const existsBill = await this.billGroupBRepo.findOne({
+          where: {
+            month: bBill.month,
+            total: bBill.total,
+            instalationNumber: bBill.instalationNumber,
+            provider: bBill.provider,
+            plant: bBill.plant,
+            totalConsume: bBill.totalConsume,
+            sistDistrUse: bBill.sistDistrUse,
+            sistDistrUseCost: bBill.sistDistrUseCost,
+          },
+        });
+        console.log('Existing B Group Bill:', existsBill);
+        if (!existsBill) {
+          const savedBill = await this.billGroupBRepo.save(bBill);
+          console.log('Saved B Group Bill:', savedBill);
+        }
+      } catch (error) {
+        console.error('Error saving B group bill:', error);
       }
     }
 
-    for (const aBill of this.getDistinctBills(aGroupBills)) {
-      const existsBills = await this.billGroupBRepo.findOne({
-        where: {
-          instalationNumber: aBill.instalationNumber,
-          month: aBill.month,
-          provider: aBill.provider,
-          medidorNumber: aBill.medidorNumber,
-          plant: aBill.plant
-        },
-      });
-      if (!existsBills) {
-        const savedBills = await this.billGroupARepo.save(aBill);
-        return savedBills;
+    for (const aBill of distinctAGroupBills) {
+      try {
+        const existsBill = await this.billGroupARepo.findOne({
+          where: {
+            month: aBill.month,
+            total: aBill.total,
+            instalationNumber: aBill.instalationNumber,
+            provider: aBill.provider,
+            plant: aBill.plant,
+            ptDemand: aBill.ptDemand,
+            fpCapDemand: aBill.fpCapDemand,
+            fpIndDemand: aBill.fpIndDemand,
+            ptVdConsume: aBill.ptVdConsume,
+            fpCapVdConsume: aBill.fpCapVdConsume,
+            fpIndVdConsume: aBill.fpIndVdConsume,
+            aPtTusdConsume: aBill.aPtTusdConsume,
+            aPtTeConsume: aBill.aPtTeConsume,
+            aFpTusdConsume: aBill.aFpTusdConsume,
+            aFpTeConsume: aBill.aFpTeConsume,
+          },
+        });
+        console.log('Existing A Group Bill:', existsBill);
+        if (!existsBill) {
+          const savedBill = await this.billGroupARepo.save(aBill);
+          console.log('Saved A Group Bill:', savedBill);
+        }
+      } catch (error) {
+        console.error('Error saving A group bill:', error);
       }
     }
-
-    const savedAGroupBills = await this.billGroupARepo.save(aGroupBills);
-    return savedAGroupBills;
   }
+
   getDistinctObjects(array) {
     return array.filter(
       (obj, index, self) =>
         index ===
-        self.findIndex((t) => t.month === obj.month && t.year === obj.year),
+        self.findIndex((t) => t.month === obj.month && t.year === obj.year)
     );
   }
 
   getDistinctBills(array) {
     return array.filter(
       (obj, index, self) =>
-        index === self.findIndex(
+        index ===
+        self.findIndex(
           (t) =>
+            t.month.getTime() === obj.month.getTime() &&
+            t.total === obj.total &&
             t.instalationNumber === obj.instalationNumber &&
-            t.month === obj.month &&
             t.provider === obj.provider &&
-            t.medidorNumber === obj.medidorNumber &&
-            t.plant === obj.plant
+            t.plant === obj.plant &&
+            t.ptDemand === obj.ptDemand &&
+            t.fpCapDemand === obj.fpCapDemand &&
+            t.fpIndDemand === obj.fpIndDemand &&
+            t.ptVdConsume === obj.ptVdConsume &&
+            t.fpCapVdConsume === obj.fpCapVdConsume &&
+            t.fpIndVdConsume === obj.fpIndVdConsume &&
+            t.aPtTusdConsume === obj.aPtTusdConsume &&
+            t.aPtTeConsume === obj.aPtTeConsume &&
+            t.aFpTusdConsume === obj.aFpTusdConsume &&
+            t.aFpTeConsume === obj.aFpTeConsume
         )
     );
   }
