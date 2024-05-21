@@ -62,8 +62,20 @@ export class IngestWatterContract {
       }
     }
 
-    const savedContracts = await this.contractRepo.save(contracts);
-    return savedContracts;
+    for (const contract of this.getDistinctContracts(contracts)) {
+      const existsContract = await this.contractRepo.findOne({
+        where: {
+          name: contract.name,
+          provider: contract.provider,
+          code: contract.code,
+          hidrometer: contract.hidrometer
+        },
+      });
+      if (!existsContract) {
+        const savedContracts = await this.contractRepo.save(contracts);
+        return savedContracts;
+      }
+    }
   }
 
   mergeCNPJs(contract: WatterContractPayload): string {
@@ -85,6 +97,19 @@ export class IngestWatterContract {
     return array.filter(
       (obj, index, self) =>
         index === self.findIndex((t) => t.plant === obj.plant)
+    );
+  }
+
+  getDistinctContracts(array) {
+    return array.filter(
+      (obj, index, self) =>
+        index === self.findIndex(
+          (t) =>
+            t.name === obj.name &&
+            t.provider === obj.provider &&
+            t.hidrometer === obj.hidrometer &&
+            t.code === obj.code
+        )
     );
   }
 }

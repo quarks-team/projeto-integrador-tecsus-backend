@@ -67,8 +67,21 @@ export class IngestEnergyContract {
       }
     }
 
-    const savedContracts = await this.contractRepo.save(contracts);
-    return savedContracts;
+    for (const contract of this.getDistinctContracts(contracts)) {
+      const existsContract = await this.contractRepo.findOne({
+        where: {
+          name: contract.name,
+          provider: contract.provider,
+          medidorNumber: contract.medidorNumber,
+          instalationNumber: contract.instalationNumber
+        },
+      });
+      if (!existsContract) {
+        const savedContracts = await this.contractRepo.save(contracts);
+        return savedContracts;
+      }
+    }
+
   }
 
   mergeCNPJs(contract: EnergyContractPayload): string {
@@ -90,6 +103,19 @@ export class IngestEnergyContract {
     return array.filter(
       (obj, index, self) =>
         index === self.findIndex((t) => t.plant === obj.plant)
+    );
+  }
+
+  getDistinctContracts(array) {
+    return array.filter(
+      (obj, index, self) =>
+        index === self.findIndex(
+          (t) =>
+            t.name === obj.name &&
+            t.provider === obj.provider &&
+            t.medidorNumber === obj.medidorNumber &&
+            t.instalationNumber === obj.instalationNumber
+        )
     );
   }
 }

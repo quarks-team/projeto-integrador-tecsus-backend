@@ -97,8 +97,37 @@ export class IngestEnergyBill {
     const savedTimes = await this.timeRepo.save(this.getDistinctObjects(times));
     console.log(savedTimes);
 
-    const savedBGroupBills = await this.billGroupBRepo.save(bGroupBills);
-    console.log(savedBGroupBills);
+    for (const bBill of this.getDistinctBills(bGroupBills)) {
+      const existsBills = await this.billGroupBRepo.findOne({
+        where: {
+          instalationNumber: bBill.instalationNumber,
+          month: bBill.month,
+          provider: bBill.provider,
+          medidorNumber: bBill.medidorNumber,
+          plant: bBill.plant
+        },
+      });
+      if (!existsBills) {
+        const savedBills = await this.billGroupBRepo.save(bBill);
+        return savedBills;
+      }
+    }
+
+    for (const aBill of this.getDistinctBills(aGroupBills)) {
+      const existsBills = await this.billGroupBRepo.findOne({
+        where: {
+          instalationNumber: aBill.instalationNumber,
+          month: aBill.month,
+          provider: aBill.provider,
+          medidorNumber: aBill.medidorNumber,
+          plant: aBill.plant
+        },
+      });
+      if (!existsBills) {
+        const savedBills = await this.billGroupARepo.save(aBill);
+        return savedBills;
+      }
+    }
 
     const savedAGroupBills = await this.billGroupARepo.save(aGroupBills);
     return savedAGroupBills;
@@ -108,6 +137,20 @@ export class IngestEnergyBill {
       (obj, index, self) =>
         index ===
         self.findIndex((t) => t.month === obj.month && t.year === obj.year),
+    );
+  }
+
+  getDistinctBills(array) {
+    return array.filter(
+      (obj, index, self) =>
+        index === self.findIndex(
+          (t) =>
+            t.instalationNumber === obj.instalationNumber &&
+            t.month === obj.month &&
+            t.provider === obj.provider &&
+            t.medidorNumber === obj.medidorNumber &&
+            t.plant === obj.plant
+        )
     );
   }
 }
