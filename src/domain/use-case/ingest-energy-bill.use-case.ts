@@ -73,10 +73,17 @@ export class IngestEnergyBill {
     console.log('Times before saving:', times);
 
     try {
-      const distinctTimes = this.getDistinctObjects(times);
-      console.log('Distinct Times:', distinctTimes);
-      const savedTimes = await this.timeRepo.save(distinctTimes);
-      console.log('Saved Times:', savedTimes);
+      for (const time of this.getDistinctObjects(times)) {
+        const existsTime = await this.timeRepo.findOne({
+          where: {
+            month: time.month,
+            year: time.year,
+          },
+        });
+        if (!existsTime) {
+          await this.timeRepo.save(time);
+        }
+      }
     } catch (error) {
       console.error('Error saving times:', error);
     }
