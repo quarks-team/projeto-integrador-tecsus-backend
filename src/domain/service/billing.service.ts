@@ -8,7 +8,7 @@ import { IngestWatterContract } from '../use-case/ingest-watter-contracts.use-ca
 import { IngestEnergyContract } from '../use-case/ingest-energy-contract.use-case';
 import { IngestEnergyBill } from '../use-case/ingest-energy-bill.use-case';
 import { IngestWatterBill } from '../use-case/ingest-watter-bill.use-case';
-import * as nodePath from 'path'; // Import path module with a different name
+import { GenerateWatterFact } from '../use-case/generate-watter-fact.use-case';
 
 @Injectable()
 export class BillingService {
@@ -17,6 +17,7 @@ export class BillingService {
     private readonly ingestEnergyContract: IngestEnergyContract,
     private readonly ingestEnergyBill: IngestEnergyBill,
     private readonly ingestWatterBill: IngestWatterBill,
+    private readonly generateWatterFact: GenerateWatterFact,
   ) {}
   async transform(fileName: string, path: string): Promise<string> {
     let bills = [];
@@ -27,10 +28,13 @@ export class BillingService {
         bills = obj;
       });
 
-    switch (fileName.substring(0, fileName.length - 4)) {
+    const name = fileName.substring(0, fileName.length - 4);
+
+    switch (name) {
       case 'con_agua':
         const watterContracts: WatterContractPayload[] = bills;
         await this.ingestWatterContract.execute(watterContracts);
+        await this.generateWatterFact.execute();
         break;
       case 'con_energia':
         const energyContracts: EnergyContractPayload[] = bills;
@@ -43,6 +47,7 @@ export class BillingService {
       case 'pro_agua':
         const watterBills: WatterBillPayload[] = bills;
         await this.ingestWatterBill.execute(watterBills);
+        await this.generateWatterFact.execute();
         break;
       default:
         throw new Error('Invalid file name or type.');
