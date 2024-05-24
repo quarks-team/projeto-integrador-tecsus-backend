@@ -12,13 +12,12 @@ export class IngestEnergyBill {
     private readonly billGroupARepo: Repository<EnergyBillGroupA>,
     @InjectRepository(EnergyBillGroupB)
     private readonly billGroupBRepo: Repository<EnergyBillGroupB>,
-  ) { }
+  ) {}
+
   async execute(energyBills: EnergyBillPayload[]) {
     const times: Partial<Time>[] = [];
     const aGroupBills: Partial<EnergyBillGroupA>[] = [];
     const bGroupBills: Partial<EnergyBillGroupB>[] = [];
-
-    console.log(energyBills);
 
     energyBills.forEach((bill) => {
       const [day, month, year] = bill['Conta do Mês'].split('/').map(Number);
@@ -27,7 +26,8 @@ export class IngestEnergyBill {
       if (
         parseFloat(bill['Consumo PT VD'].replace(',', '')) > 0 &&
         parseFloat(bill['Consumo FP CAP VD'].replace(',', '')) > 0 &&
-        parseFloat(bill['Consumo FP IND VD'].replace(',', '')) > 0) {
+        parseFloat(bill['Consumo FP IND VD'].replace(',', '')) > 0
+      ) {
         bGroupBills.push({
           month: billDate,
           total: Number.parseFloat(bill.Total.replace(',', '')),
@@ -35,18 +35,12 @@ export class IngestEnergyBill {
           provider: bill.Fornecedor,
           medidorNumber: bill['Número Medidor'],
           plant: bill.Planta,
-          totalConsume: Number.parseFloat(
-            bill['Consumo PT VD'].replace(',', '')
-          ) +
-            Number.parseFloat(
-              bill['Consumo FP CAP VD'].replace(',', '')
-            ) +
-            Number.parseFloat(
-              bill['Consumo FP IND VD'].replace(',', '')
-            )
-          ,
+          totalConsume:
+            Number.parseFloat(bill['Consumo PT VD'].replace(',', '')) +
+            Number.parseFloat(bill['Consumo FP CAP VD'].replace(',', '')) +
+            Number.parseFloat(bill['Consumo FP IND VD'].replace(',', '')),
           sistDistrUse: 0,
-          sistDistrUseCost: 0
+          sistDistrUseCost: 0,
         });
       } else {
         aGroupBills.push({
@@ -55,36 +49,16 @@ export class IngestEnergyBill {
           instalationNumber: bill['Número Instalação'],
           provider: bill.Fornecedor,
           plant: bill.Planta,
-          ptDemand: Number.parseFloat(
-            bill['Demanda PT (kW)'].replace(',', '')
-          ),
-          fpCapDemand: Number.parseFloat(
-            bill['Demanda FP CAP (kW)'].replace(',', '')
-          ),
-          fpIndDemand: Number.parseFloat(
-            bill['Demanda FP IND (kW)'].replace(',', '')
-          ),
-          ptVdConsume: Number.parseFloat(
-            bill['Consumo PT VD'].replace(',', '')
-          ),
-          fpCapVdConsume: Number.parseFloat(
-            bill['Consumo FP CAP VD'].replace(',', '')
-          ),
-          fpIndVdConsume: Number.parseFloat(
-            bill['Consumo FP IND VD'].replace(',', '')
-          ),
-          aPtTusdConsume: Number.parseFloat(
-            bill['Consumo A PT (TUSD) Custo'].replace(',', '')
-          ),
-          aPtTeConsume: Number.parseFloat(
-            bill['Consumo A PT (TE) Custo'].replace(',', '')
-          ),
-          aFpTusdConsume: Number.parseFloat(
-            bill['Consumo A FP (TUSD) Custo'].replace(',', '')
-          ),
-          aFpTeConsume: Number.parseFloat(
-            bill['Consumo A FP (TE) Custo'].replace(',', '')
-          )
+          ptDemand: Number.parseFloat(bill['Demanda PT (kW)'].replace(',', '')),
+          fpCapDemand: Number.parseFloat(bill['Demanda FP CAP (kW)'].replace(',', '')),
+          fpIndDemand: Number.parseFloat(bill['Demanda FP IND (kW)'].replace(',', '')),
+          ptVdConsume: Number.parseFloat(bill['Consumo PT VD'].replace(',', '')),
+          fpCapVdConsume: Number.parseFloat(bill['Consumo FP CAP VD'].replace(',', '')),
+          fpIndVdConsume: Number.parseFloat(bill['Consumo FP IND VD'].replace(',', '')),
+          aPtTusdConsume: Number.parseFloat(bill['Consumo A PT (TUSD) Custo'].replace(',', '')),
+          aPtTeConsume: Number.parseFloat(bill['Consumo A PT (TE) Custo'].replace(',', '')),
+          aFpTusdConsume: Number.parseFloat(bill['Consumo A FP (TUSD) Custo'].replace(',', '')),
+          aFpTeConsume: Number.parseFloat(bill['Consumo A FP (TE) Custo'].replace(',', '')),
         });
       }
 
@@ -94,20 +68,95 @@ export class IngestEnergyBill {
       });
     });
 
-    const savedTimes = await this.timeRepo.save(this.getDistinctObjects(times));
-    console.log(savedTimes);
+    console.log('Times before saving:', times);
 
-    const savedBGroupBills = await this.billGroupBRepo.save(bGroupBills);
-    console.log(savedBGroupBills);
+    try {
+      for (const time of this.getDistinctObjects(times)) {
+        const existsTime = await this.timeRepo.findOne({
+          where: {
+            month: time.month,
+            year: time.year,
+          },
+        });
+        if (!existsTime) {
+          await this.timeRepo.save(time);
+        }
+      }
+    } catch (error) {
+      console.error('Error saving times:', error);
+    }
 
-    const savedAGroupBills = await this.billGroupARepo.save(aGroupBills);
-    return savedAGroupBills;
+    const distinctBGroupBills = this.getDistinctBills(bGroupBills);
+    const distinctAGroupBills = this.getDistinctBills(aGroupBills);
+
+    for (const bBill of distinctBGroupBills) {
+      try {
+        const existsBillb = await this.billGroupBRepo.findOne({
+          where: {
+            month: bBill.month,
+            instalationNumber: bBill.instalationNumber,
+            provider: bBill.provider,
+            plant: bBill.plant
+          },
+        });
+        if (!existsBillb) {
+          await this.billGroupBRepo.save(bBill);
+        }
+      } catch (error) {
+        console.error('Error saving B group bill:', error);
+      }
+    }
+
+    for (const aBill of distinctAGroupBills) {
+      try {
+        const existsBilla = await this.billGroupARepo.findOne({
+          where: {
+            month: aBill.month,
+            instalationNumber: aBill.instalationNumber,
+            provider: aBill.provider,
+            plant: aBill.plant
+          },
+        });
+        console.log('Existing A Group Bill:', existsBilla);
+        if (!existsBilla) {
+          await this.billGroupARepo.save(aBill);
+        }
+      } catch (error) {
+        console.error('Error saving A group bill:', error);
+      }
+    }
   }
+
   getDistinctObjects(array) {
     return array.filter(
       (obj, index, self) =>
         index ===
-        self.findIndex((t) => t.month === obj.month && t.year === obj.year),
+        self.findIndex((t) => t.month === obj.month && t.year === obj.year)
+    );
+  }
+
+  getDistinctBills(array) {
+    return array.filter(
+      (obj, index, self) =>
+        index ===
+        self.findIndex(
+          (t) =>
+            t.month.getTime() === obj.month.getTime() &&
+            t.total === obj.total &&
+            t.instalationNumber === obj.instalationNumber &&
+            t.provider === obj.provider &&
+            t.plant === obj.plant &&
+            t.ptDemand === obj.ptDemand &&
+            t.fpCapDemand === obj.fpCapDemand &&
+            t.fpIndDemand === obj.fpIndDemand &&
+            t.ptVdConsume === obj.ptVdConsume &&
+            t.fpCapVdConsume === obj.fpCapVdConsume &&
+            t.fpIndVdConsume === obj.fpIndVdConsume &&
+            t.aPtTusdConsume === obj.aPtTusdConsume &&
+            t.aPtTeConsume === obj.aPtTeConsume &&
+            t.aFpTusdConsume === obj.aFpTusdConsume &&
+            t.aFpTeConsume === obj.aFpTeConsume
+        )
     );
   }
 }

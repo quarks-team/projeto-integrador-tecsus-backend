@@ -55,14 +55,39 @@ export class IngestWatterBill {
       }
     }
 
-    const savedBills = await this.billRepo.save(bills);
-    return savedBills;
+    for (const bill of this.getDistinctBills(bills)) {
+      const existsBills = await this.billRepo.findOne({
+        where: {
+          rgiCode: bill.rgiCode,
+          billDate: bill.billDate,
+          hidrometer: bill.hidrometer,
+          plant: bill.plant
+        },
+      });
+      if (!existsBills) {
+        const savedBills = await this.billRepo.save(bills);
+        return savedBills;
+      }
+    }
   }
   getDistinctObjects(array) {
     return array.filter(
       (obj, index, self) =>
         index ===
         self.findIndex((t) => t.month === obj.month && t.year === obj.year),
+    );
+  }
+
+  getDistinctBills(array) {
+    return array.filter(
+      (obj, index, self) =>
+        index === self.findIndex(
+          (t) =>
+            t.rgiCode === obj.rgiCode &&
+            t.billDate === obj.billDate &&
+            t.hidrometer === obj.hidrometer &&
+            t.plant === obj.plant
+        )
     );
   }
 }
