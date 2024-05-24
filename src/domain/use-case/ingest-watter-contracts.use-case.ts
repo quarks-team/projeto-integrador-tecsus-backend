@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Unity } from '../entity/unity.entity';
 import { WatterContractPayload } from '../request/watter-contract-payload';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { WatterContract } from '../entity/watter-contract.entity';
 import { PlacePlant } from '../entity/place_plant.entity';
 
@@ -40,30 +40,75 @@ export class IngestWatterContract {
       });
     });
 
-    for (const unity of this.getDistinctUnitys(unitys)) {
-      const existsUnity = await this.unityRepo.findOne({
+    try {
+      const distinctUnitys = this.getDistinctUnitys(unitys);
+      const existingUnitys = await this.unityRepo.find({
         where: {
-          cnpj: unity.cnpj,
+          cnpj: In(distinctUnitys.map((unity) => unity.cnpj)),
         },
       });
-      if (!existsUnity) {
-        await this.unityRepo.save(unity);
-      }
+
+      const existingUnityMap = new Set(
+        existingUnitys.map((unity) => unity.cnpj),
+      );
+      const newUnitys = distinctUnitys.filter(
+        (unity) => !existingUnityMap.has(unity.cnpj),
+      );
+
+      await this.unityRepo.save(newUnitys);
+    } catch (error) {
+      console.error('Error saving unitys:', error);
     }
 
-    for (const placePlant of this.getDistinctPlacePlants(placePlants)) {
-      const existsPlacePlant = await this.placePlantRepo.findOne({
+    try {
+      const distinctPlacePlants = this.getDistinctPlacePlants(placePlants);
+      const existingPlacePlants = await this.placePlantRepo.find({
         where: {
-          plant: placePlant.plant,
+          plant: In(distinctPlacePlants.map((placePlant) => placePlant.plant)),
         },
       });
-      if (!existsPlacePlant) {
-        await this.placePlantRepo.save(placePlant);
-      }
+
+      const existingPlacePlantMap = new Set(
+        existingPlacePlants.map((placePlant) => placePlant.plant),
+      );
+      const newPlacePlants = distinctPlacePlants.filter(
+        (placePlant) => !existingPlacePlantMap.has(placePlant.plant),
+      );
+
+      await this.placePlantRepo.save(newPlacePlants);
+    } catch (error) {
+      console.error('Error saving place plants:', error);
     }
 
-    const savedContracts = await this.contractRepo.save(contracts);
-    return savedContracts;
+    try {
+      const distinctContracts = this.getDistinctContracts(contracts);
+      const existingContracts = await this.contractRepo.find({
+        where: distinctContracts.map((contract) => ({
+          name: contract.name,
+          provider: contract.provider,
+          code: contract.code,
+          hidrometer: contract.hidrometer,
+        })),
+      });
+
+      const existingContractMap = new Set(
+        existingContracts.map(
+          (contract) =>
+            `${contract.name}-${contract.provider}-${contract.code}-${contract.hidrometer}`,
+        ),
+      );
+
+      const newContracts = distinctContracts.filter(
+        (contract) =>
+          !existingContractMap.has(
+            `${contract.name}-${contract.provider}-${contract.code}-${contract.hidrometer}`,
+          ),
+      );
+
+      await this.contractRepo.save(newContracts);
+    } catch (error) {
+      console.error('Error saving contracts:', error);
+    }
   }
 
   mergeCNPJs(contract: WatterContractPayload): string {
@@ -88,6 +133,20 @@ export class IngestWatterContract {
     return array.filter(
       (obj, index, self) =>
         index === self.findIndex((t) => t.plant === obj.plant),
+    );
+  }
+
+  getDistinctContracts(array) {
+    return array.filter(
+      (obj, index, self) =>
+        index ===
+        self.findIndex(
+          (t) =>
+            t.name === obj.name &&
+            t.provider === obj.provider &&
+            t.hidrometer === obj.hidrometer &&
+            t.code === obj.code,
+        ),
     );
   }
 }

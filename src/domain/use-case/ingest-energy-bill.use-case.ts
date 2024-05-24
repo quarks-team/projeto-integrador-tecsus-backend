@@ -13,6 +13,7 @@ export class IngestEnergyBill {
     @InjectRepository(EnergyBillGroupB)
     private readonly billGroupBRepo: Repository<EnergyBillGroupB>,
   ) {}
+
   async execute(energyBills: EnergyBillPayload[]) {
     const times: Partial<Time>[] = [];
     const aGroupBills: Partial<EnergyBillGroupA>[] = [];
@@ -85,18 +86,119 @@ export class IngestEnergyBill {
       });
     });
 
-    const savedTimes = await this.timeRepo.save(this.getDistinctObjects(times));
+    try {
+      const distinctTimes = this.getDistinctObjects(times);
+      const existingTimes = await this.timeRepo.find({
+        where: distinctTimes.map((time) => ({
+          month: time.month,
+          year: time.year,
+        })),
+      });
 
-    const savedBGroupBills = await this.billGroupBRepo.save(bGroupBills);
+      const existingTimeMap = new Set(
+        existingTimes.map((time) => `${time.month}-${time.year}`),
+      );
+      const newTimes = distinctTimes.filter(
+        (time) => !existingTimeMap.has(`${time.month}-${time.year}`),
+      );
 
-    const savedAGroupBills = await this.billGroupARepo.save(aGroupBills);
-    return savedAGroupBills;
+      await this.timeRepo.save(newTimes);
+    } catch (error) {
+      console.error('Error saving times:', error);
+    }
+
+    const distinctBGroupBills = this.getDistinctBills(bGroupBills);
+    const distinctAGroupBills = this.getDistinctBills(aGroupBills);
+
+    try {
+      const existingBGroupBills = await this.billGroupBRepo.find({
+        where: distinctBGroupBills.map((bBill) => ({
+          month: bBill.month,
+          instalationNumber: bBill.instalationNumber,
+          provider: bBill.provider,
+          plant: bBill.plant,
+        })),
+      });
+
+      const existingBGroupBillMap = new Set(
+        existingBGroupBills.map(
+          (bBill) =>
+            `${bBill.month.getTime()}-${bBill.instalationNumber}-${bBill.provider}-${bBill.plant}`,
+        ),
+      );
+
+      const newBGroupBills = distinctBGroupBills.filter(
+        (bBill) =>
+          !existingBGroupBillMap.has(
+            `${bBill.month.getTime()}-${bBill.instalationNumber}-${bBill.provider}-${bBill.plant}`,
+          ),
+      );
+
+      await this.billGroupBRepo.save(newBGroupBills);
+    } catch (error) {
+      console.error('Error saving B group bills:', error);
+    }
+
+    try {
+      const existingAGroupBills = await this.billGroupARepo.find({
+        where: distinctAGroupBills.map((aBill) => ({
+          month: aBill.month,
+          instalationNumber: aBill.instalationNumber,
+          provider: aBill.provider,
+          plant: aBill.plant,
+        })),
+      });
+
+      const existingAGroupBillMap = new Set(
+        existingAGroupBills.map(
+          (aBill) =>
+            `${aBill.month.getTime()}-${aBill.instalationNumber}-${aBill.provider}-${aBill.plant}`,
+        ),
+      );
+
+      const newAGroupBills = distinctAGroupBills.filter(
+        (aBill) =>
+          !existingAGroupBillMap.has(
+            `${aBill.month.getTime()}-${aBill.instalationNumber}-${aBill.provider}-${aBill.plant}`,
+          ),
+      );
+
+      await this.billGroupARepo.save(newAGroupBills);
+    } catch (error) {
+      console.error('Error saving A group bills:', error);
+    }
   }
+
   getDistinctObjects(array) {
     return array.filter(
       (obj, index, self) =>
         index ===
         self.findIndex((t) => t.month === obj.month && t.year === obj.year),
+    );
+  }
+
+  getDistinctBills(array) {
+    return array.filter(
+      (obj, index, self) =>
+        index ===
+        self.findIndex(
+          (t) =>
+            t.month.getTime() === obj.month.getTime() &&
+            t.total === obj.total &&
+            t.instalationNumber === obj.instalationNumber &&
+            t.provider === obj.provider &&
+            t.plant === obj.plant &&
+            t.ptDemand === obj.ptDemand &&
+            t.fpCapDemand === obj.fpCapDemand &&
+            t.fpIndDemand === obj.fpIndDemand &&
+            t.ptVdConsume === obj.ptVdConsume &&
+            t.fpCapVdConsume === obj.fpCapVdConsume &&
+            t.fpIndVdConsume === obj.fpIndVdConsume &&
+            t.aPtTusdConsume === obj.aPtTusdConsume &&
+            t.aPtTeConsume === obj.aPtTeConsume &&
+            t.aFpTusdConsume === obj.aFpTusdConsume &&
+            t.aFpTeConsume === obj.aFpTeConsume,
+        ),
     );
   }
 }
