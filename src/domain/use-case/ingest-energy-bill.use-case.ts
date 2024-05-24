@@ -19,8 +19,6 @@ export class IngestEnergyBill {
     const aGroupBills: Partial<EnergyBillGroupA>[] = [];
     const bGroupBills: Partial<EnergyBillGroupB>[] = [];
 
-    console.log('Energy Bills:', energyBills);
-
     energyBills.forEach((bill) => {
       const [day, month, year] = bill['Conta do Mês'].split('/').map(Number);
       const billDate = new Date(year, month - 1, day);
@@ -91,9 +89,6 @@ export class IngestEnergyBill {
     const distinctBGroupBills = this.getDistinctBills(bGroupBills);
     const distinctAGroupBills = this.getDistinctBills(aGroupBills);
 
-    console.log('Distinct B Group Bills:', distinctBGroupBills);
-    console.log('Distinct A Group Bills:', distinctAGroupBills);
-
     for (const bBill of distinctBGroupBills) {
       try {
         const existsBillb = await this.billGroupBRepo.findOne({
@@ -104,10 +99,8 @@ export class IngestEnergyBill {
             plant: bBill.plant
           },
         });
-        console.log('Existing B Group Bill:', existsBillb);
         if (!existsBillb) {
-          const savedBill = await this.billGroupBRepo.save(bBill);
-          console.log('Saved B Group Bill:', savedBill);
+          await this.billGroupBRepo.save(bBill);
         }
       } catch (error) {
         console.error('Error saving B group bill:', error);
@@ -126,8 +119,7 @@ export class IngestEnergyBill {
         });
         console.log('Existing A Group Bill:', existsBilla);
         if (!existsBilla) {
-          const savedBill = await this.billGroupARepo.save(aBill);
-          console.log('Saved A Group Bill:', savedBill);
+          await this.billGroupARepo.save(aBill);
         }
       } catch (error) {
         console.error('Error saving A group bill:', error);
