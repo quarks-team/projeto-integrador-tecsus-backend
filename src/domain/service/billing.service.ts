@@ -8,7 +8,7 @@ import { IngestWatterContract } from '../use-case/ingest-watter-contracts.use-ca
 import { IngestEnergyContract } from '../use-case/ingest-energy-contract.use-case';
 import { IngestEnergyBill } from '../use-case/ingest-energy-bill.use-case';
 import { IngestWatterBill } from '../use-case/ingest-watter-bill.use-case';
-import * as nodePath from 'path'; // Import path module with a different name
+import { GenerateEnergyFact } from '../use-case/generate-energy-fact.use-case';
 
 @Injectable()
 export class BillingService {
@@ -17,6 +17,7 @@ export class BillingService {
     private readonly ingestEnergyContract: IngestEnergyContract,
     private readonly ingestEnergyBill: IngestEnergyBill,
     private readonly ingestWatterBill: IngestWatterBill,
+    private readonly generateEnergyFact: GenerateEnergyFact,
   ) {}
   async transform(fileName: string, path: string): Promise<string> {
     let bills = [];
@@ -35,10 +36,12 @@ export class BillingService {
       case 'con_energia':
         const energyContracts: EnergyContractPayload[] = bills;
         await this.ingestEnergyContract.execute(energyContracts);
+        await this.generateEnergyFact.execute();
         break;
       case 'pro_energia':
         const energyBills: EnergyBillPayload[] = bills;
         await this.ingestEnergyBill.execute(energyBills);
+        await this.generateEnergyFact.execute();
         break;
       case 'pro_agua':
         const watterBills: WatterBillPayload[] = bills;

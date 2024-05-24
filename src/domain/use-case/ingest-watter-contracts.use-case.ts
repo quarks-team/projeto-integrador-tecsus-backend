@@ -10,9 +10,11 @@ import { PlacePlant } from '../entity/place_plant.entity';
 export class IngestWatterContract {
   constructor(
     @InjectRepository(Unity) private readonly unityRepo: Repository<Unity>,
-    @InjectRepository(WatterContract) private readonly contractRepo: Repository<WatterContract>,
-    @InjectRepository(PlacePlant) private readonly placePlantRepo: Repository<PlacePlant>,
-  ) { }
+    @InjectRepository(WatterContract)
+    private readonly contractRepo: Repository<WatterContract>,
+    @InjectRepository(PlacePlant)
+    private readonly placePlantRepo: Repository<PlacePlant>,
+  ) {}
 
   async execute(watterContracts: WatterContractPayload[]) {
     const unitys: Partial<Unity>[] = [];
@@ -26,15 +28,15 @@ export class IngestWatterContract {
         code: contract['Código de Ligação (RGI)'].replace(/[-\/]/g, ''),
         hidrometer: contract['Hidrômetro'],
         provider: contract['Fornecedor'],
-        cnpj: mergedCNPJ
+        cnpj: mergedCNPJ,
       });
 
       unitys.push({
-        cnpj: mergedCNPJ
+        cnpj: mergedCNPJ,
       });
 
       placePlants.push({
-        plant: contract.Planta
+        plant: contract.Planta,
       });
     });
 
@@ -45,8 +47,7 @@ export class IngestWatterContract {
         },
       });
       if (!existsUnity) {
-        const unitysCreated = await this.unityRepo.save(unity);
-        console.log(unitysCreated);
+        await this.unityRepo.save(unity);
       }
     }
 
@@ -57,8 +58,7 @@ export class IngestWatterContract {
         },
       });
       if (!existsPlacePlant) {
-        const plantsCreated = await this.placePlantRepo.save(placePlant);
-        console.log(plantsCreated);
+        await this.placePlantRepo.save(placePlant);
       }
     }
 
@@ -69,7 +69,10 @@ export class IngestWatterContract {
   mergeCNPJs(contract: WatterContractPayload): string {
     const campoExtra3: string = contract['Campo Extra 3'] || '';
     const campoExtra4: string = contract['Campo Extra 4'] || '';
-    const mergedList: string = (campoExtra3 + campoExtra4).replace(/[^\d]/g, '');
+    const mergedList: string = (campoExtra3 + campoExtra4).replace(
+      /[^\d]/g,
+      '',
+    );
     const uniqueCNPJs: string = [...new Set(mergedList.split(''))].join('');
     return uniqueCNPJs;
   }
@@ -77,14 +80,14 @@ export class IngestWatterContract {
   getDistinctUnitys(array) {
     return array.filter(
       (obj, index, self) =>
-        index === self.findIndex((t) => t.cnpj === obj.cnpj)
+        index === self.findIndex((t) => t.cnpj === obj.cnpj),
     );
   }
 
   getDistinctPlacePlants(array) {
     return array.filter(
       (obj, index, self) =>
-        index === self.findIndex((t) => t.plant === obj.plant)
+        index === self.findIndex((t) => t.plant === obj.plant),
     );
   }
 }
