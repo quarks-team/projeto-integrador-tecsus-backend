@@ -14,6 +14,8 @@ import { Time } from 'src/domain/entity/time.entity';
 import { IngestEnergyBill } from 'src/domain/use-case/ingest-energy-bill.use-case';
 import { WatterBill } from 'src/domain/entity/watter-bill.entity';
 import { IngestWatterBill } from 'src/domain/use-case/ingest-watter-bill.use-case';
+import { WatterFact } from 'src/domain/entity/watter-fact.entity';
+import { GenerateWatterFact } from 'src/domain/use-case/generate-watter-fact.use-case';
 
 @Module({
   imports: [
@@ -25,6 +27,7 @@ import { IngestWatterBill } from 'src/domain/use-case/ingest-watter-bill.use-cas
     TypeOrmModule.forFeature([PlacePlant]),
     TypeOrmModule.forFeature([WatterBill]),
     TypeOrmModule.forFeature([Time]),
+    TypeOrmModule.forFeature([WatterFact]),
   ],
   controllers: [BillingController],
   providers: [
@@ -33,6 +36,7 @@ import { IngestWatterBill } from 'src/domain/use-case/ingest-watter-bill.use-cas
     IngestEnergyContract,
     IngestEnergyBill,
     IngestWatterBill,
+    GenerateWatterFact,
   ],
   exports: [],
 })
