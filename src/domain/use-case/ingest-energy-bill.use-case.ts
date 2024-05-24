@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository } from 'typeorm';
 import { EnergyBillGroupA } from '../entity/energy-bill-group-a.entity';
 import { EnergyBillGroupB } from '../entity/energy-bill-group-b.entity';
 import { EnergyBillPayload } from '../request/energy-bill-payload';
@@ -50,15 +50,33 @@ export class IngestEnergyBill {
           provider: bill.Fornecedor,
           plant: bill.Planta,
           ptDemand: Number.parseFloat(bill['Demanda PT (kW)'].replace(',', '')),
-          fpCapDemand: Number.parseFloat(bill['Demanda FP CAP (kW)'].replace(',', '')),
-          fpIndDemand: Number.parseFloat(bill['Demanda FP IND (kW)'].replace(',', '')),
-          ptVdConsume: Number.parseFloat(bill['Consumo PT VD'].replace(',', '')),
-          fpCapVdConsume: Number.parseFloat(bill['Consumo FP CAP VD'].replace(',', '')),
-          fpIndVdConsume: Number.parseFloat(bill['Consumo FP IND VD'].replace(',', '')),
-          aPtTusdConsume: Number.parseFloat(bill['Consumo A PT (TUSD) Custo'].replace(',', '')),
-          aPtTeConsume: Number.parseFloat(bill['Consumo A PT (TE) Custo'].replace(',', '')),
-          aFpTusdConsume: Number.parseFloat(bill['Consumo A FP (TUSD) Custo'].replace(',', '')),
-          aFpTeConsume: Number.parseFloat(bill['Consumo A FP (TE) Custo'].replace(',', '')),
+          fpCapDemand: Number.parseFloat(
+            bill['Demanda FP CAP (kW)'].replace(',', ''),
+          ),
+          fpIndDemand: Number.parseFloat(
+            bill['Demanda FP IND (kW)'].replace(',', ''),
+          ),
+          ptVdConsume: Number.parseFloat(
+            bill['Consumo PT VD'].replace(',', ''),
+          ),
+          fpCapVdConsume: Number.parseFloat(
+            bill['Consumo FP CAP VD'].replace(',', ''),
+          ),
+          fpIndVdConsume: Number.parseFloat(
+            bill['Consumo FP IND VD'].replace(',', ''),
+          ),
+          aPtTusdConsume: Number.parseFloat(
+            bill['Consumo A PT (TUSD) Custo'].replace(',', ''),
+          ),
+          aPtTeConsume: Number.parseFloat(
+            bill['Consumo A PT (TE) Custo'].replace(',', ''),
+          ),
+          aFpTusdConsume: Number.parseFloat(
+            bill['Consumo A FP (TUSD) Custo'].replace(',', ''),
+          ),
+          aFpTeConsume: Number.parseFloat(
+            bill['Consumo A FP (TE) Custo'].replace(',', ''),
+          ),
         });
       }
 
@@ -71,14 +89,18 @@ export class IngestEnergyBill {
     try {
       const distinctTimes = this.getDistinctObjects(times);
       const existingTimes = await this.timeRepo.find({
-        where: distinctTimes.map(time => ({
+        where: distinctTimes.map((time) => ({
           month: time.month,
           year: time.year,
         })),
       });
 
-      const existingTimeMap = new Set(existingTimes.map(time => `${time.month}-${time.year}`));
-      const newTimes = distinctTimes.filter(time => !existingTimeMap.has(`${time.month}-${time.year}`));
+      const existingTimeMap = new Set(
+        existingTimes.map((time) => `${time.month}-${time.year}`),
+      );
+      const newTimes = distinctTimes.filter(
+        (time) => !existingTimeMap.has(`${time.month}-${time.year}`),
+      );
 
       await this.timeRepo.save(newTimes);
     } catch (error) {
@@ -90,7 +112,7 @@ export class IngestEnergyBill {
 
     try {
       const existingBGroupBills = await this.billGroupBRepo.find({
-        where: distinctBGroupBills.map(bBill => ({
+        where: distinctBGroupBills.map((bBill) => ({
           month: bBill.month,
           instalationNumber: bBill.instalationNumber,
           provider: bBill.provider,
@@ -98,14 +120,18 @@ export class IngestEnergyBill {
         })),
       });
 
-      const existingBGroupBillMap = new Set(existingBGroupBills.map(bBill =>
-        `${bBill.month.getTime()}-${bBill.instalationNumber}-${bBill.provider}-${bBill.plant}`
-      ));
+      const existingBGroupBillMap = new Set(
+        existingBGroupBills.map(
+          (bBill) =>
+            `${bBill.month.getTime()}-${bBill.instalationNumber}-${bBill.provider}-${bBill.plant}`,
+        ),
+      );
 
-      const newBGroupBills = distinctBGroupBills.filter(bBill =>
-        !existingBGroupBillMap.has(
-          `${bBill.month.getTime()}-${bBill.instalationNumber}-${bBill.provider}-${bBill.plant}`
-        )
+      const newBGroupBills = distinctBGroupBills.filter(
+        (bBill) =>
+          !existingBGroupBillMap.has(
+            `${bBill.month.getTime()}-${bBill.instalationNumber}-${bBill.provider}-${bBill.plant}`,
+          ),
       );
 
       await this.billGroupBRepo.save(newBGroupBills);
@@ -115,7 +141,7 @@ export class IngestEnergyBill {
 
     try {
       const existingAGroupBills = await this.billGroupARepo.find({
-        where: distinctAGroupBills.map(aBill => ({
+        where: distinctAGroupBills.map((aBill) => ({
           month: aBill.month,
           instalationNumber: aBill.instalationNumber,
           provider: aBill.provider,
@@ -123,16 +149,18 @@ export class IngestEnergyBill {
         })),
       });
 
-      
+      const existingAGroupBillMap = new Set(
+        existingAGroupBills.map(
+          (aBill) =>
+            `${aBill.month.getTime()}-${aBill.instalationNumber}-${aBill.provider}-${aBill.plant}`,
+        ),
+      );
 
-      const existingAGroupBillMap = new Set(existingAGroupBills.map(aBill =>
-        `${aBill.month.getTime()}-${aBill.instalationNumber}-${aBill.provider}-${aBill.plant}`
-      ));
-
-      const newAGroupBills = distinctAGroupBills.filter(aBill =>
-        !existingAGroupBillMap.has(
-          `${aBill.month.getTime()}-${aBill.instalationNumber}-${aBill.provider}-${aBill.plant}`
-        )
+      const newAGroupBills = distinctAGroupBills.filter(
+        (aBill) =>
+          !existingAGroupBillMap.has(
+            `${aBill.month.getTime()}-${aBill.instalationNumber}-${aBill.provider}-${aBill.plant}`,
+          ),
       );
 
       await this.billGroupARepo.save(newAGroupBills);
@@ -145,7 +173,7 @@ export class IngestEnergyBill {
     return array.filter(
       (obj, index, self) =>
         index ===
-        self.findIndex((t) => t.month === obj.month && t.year === obj.year)
+        self.findIndex((t) => t.month === obj.month && t.year === obj.year),
     );
   }
 
@@ -169,8 +197,8 @@ export class IngestEnergyBill {
             t.aPtTusdConsume === obj.aPtTusdConsume &&
             t.aPtTeConsume === obj.aPtTeConsume &&
             t.aFpTusdConsume === obj.aFpTusdConsume &&
-            t.aFpTeConsume === obj.aFpTeConsume
-        )
+            t.aFpTeConsume === obj.aFpTeConsume,
+        ),
     );
   }
 }

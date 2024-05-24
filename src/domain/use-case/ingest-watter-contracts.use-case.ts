@@ -10,9 +10,11 @@ import { PlacePlant } from '../entity/place_plant.entity';
 export class IngestWatterContract {
   constructor(
     @InjectRepository(Unity) private readonly unityRepo: Repository<Unity>,
-    @InjectRepository(WatterContract) private readonly contractRepo: Repository<WatterContract>,
-    @InjectRepository(PlacePlant) private readonly placePlantRepo: Repository<PlacePlant>,
-  ) { }
+    @InjectRepository(WatterContract)
+    private readonly contractRepo: Repository<WatterContract>,
+    @InjectRepository(PlacePlant)
+    private readonly placePlantRepo: Repository<PlacePlant>,
+  ) {}
 
   async execute(watterContracts: WatterContractPayload[]) {
     const unitys: Partial<Unity>[] = [];
@@ -26,15 +28,15 @@ export class IngestWatterContract {
         code: contract['Código de Ligação (RGI)'].replace(/[-\/]/g, ''),
         hidrometer: contract['Hidrômetro'],
         provider: contract['Fornecedor'],
-        cnpj: mergedCNPJ
+        cnpj: mergedCNPJ,
       });
 
       unitys.push({
-        cnpj: mergedCNPJ
+        cnpj: mergedCNPJ,
       });
 
       placePlants.push({
-        plant: contract.Planta
+        plant: contract.Planta,
       });
     });
 
@@ -42,12 +44,16 @@ export class IngestWatterContract {
       const distinctUnitys = this.getDistinctUnitys(unitys);
       const existingUnitys = await this.unityRepo.find({
         where: {
-          cnpj: In(distinctUnitys.map(unity => unity.cnpj)),
+          cnpj: In(distinctUnitys.map((unity) => unity.cnpj)),
         },
       });
 
-      const existingUnityMap = new Set(existingUnitys.map(unity => unity.cnpj));
-      const newUnitys = distinctUnitys.filter(unity => !existingUnityMap.has(unity.cnpj));
+      const existingUnityMap = new Set(
+        existingUnitys.map((unity) => unity.cnpj),
+      );
+      const newUnitys = distinctUnitys.filter(
+        (unity) => !existingUnityMap.has(unity.cnpj),
+      );
 
       await this.unityRepo.save(newUnitys);
     } catch (error) {
@@ -58,12 +64,16 @@ export class IngestWatterContract {
       const distinctPlacePlants = this.getDistinctPlacePlants(placePlants);
       const existingPlacePlants = await this.placePlantRepo.find({
         where: {
-          plant: In(distinctPlacePlants.map(placePlant => placePlant.plant)),
+          plant: In(distinctPlacePlants.map((placePlant) => placePlant.plant)),
         },
       });
 
-      const existingPlacePlantMap = new Set(existingPlacePlants.map(placePlant => placePlant.plant));
-      const newPlacePlants = distinctPlacePlants.filter(placePlant => !existingPlacePlantMap.has(placePlant.plant));
+      const existingPlacePlantMap = new Set(
+        existingPlacePlants.map((placePlant) => placePlant.plant),
+      );
+      const newPlacePlants = distinctPlacePlants.filter(
+        (placePlant) => !existingPlacePlantMap.has(placePlant.plant),
+      );
 
       await this.placePlantRepo.save(newPlacePlants);
     } catch (error) {
@@ -73,7 +83,7 @@ export class IngestWatterContract {
     try {
       const distinctContracts = this.getDistinctContracts(contracts);
       const existingContracts = await this.contractRepo.find({
-        where: distinctContracts.map(contract => ({
+        where: distinctContracts.map((contract) => ({
           name: contract.name,
           provider: contract.provider,
           code: contract.code,
@@ -81,12 +91,18 @@ export class IngestWatterContract {
         })),
       });
 
-      const existingContractMap = new Set(existingContracts.map(contract =>
-        `${contract.name}-${contract.provider}-${contract.code}-${contract.hidrometer}`
-      ));
+      const existingContractMap = new Set(
+        existingContracts.map(
+          (contract) =>
+            `${contract.name}-${contract.provider}-${contract.code}-${contract.hidrometer}`,
+        ),
+      );
 
-      const newContracts = distinctContracts.filter(contract =>
-        !existingContractMap.has(`${contract.name}-${contract.provider}-${contract.code}-${contract.hidrometer}`)
+      const newContracts = distinctContracts.filter(
+        (contract) =>
+          !existingContractMap.has(
+            `${contract.name}-${contract.provider}-${contract.code}-${contract.hidrometer}`,
+          ),
       );
 
       await this.contractRepo.save(newContracts);
@@ -98,7 +114,10 @@ export class IngestWatterContract {
   mergeCNPJs(contract: WatterContractPayload): string {
     const campoExtra3: string = contract['Campo Extra 3'] || '';
     const campoExtra4: string = contract['Campo Extra 4'] || '';
-    const mergedList: string = (campoExtra3 + campoExtra4).replace(/[^\d]/g, '');
+    const mergedList: string = (campoExtra3 + campoExtra4).replace(
+      /[^\d]/g,
+      '',
+    );
     const uniqueCNPJs: string = [...new Set(mergedList.split(''))].join('');
     return uniqueCNPJs;
   }
@@ -106,27 +125,28 @@ export class IngestWatterContract {
   getDistinctUnitys(array) {
     return array.filter(
       (obj, index, self) =>
-        index === self.findIndex((t) => t.cnpj === obj.cnpj)
+        index === self.findIndex((t) => t.cnpj === obj.cnpj),
     );
   }
 
   getDistinctPlacePlants(array) {
     return array.filter(
       (obj, index, self) =>
-        index === self.findIndex((t) => t.plant === obj.plant)
+        index === self.findIndex((t) => t.plant === obj.plant),
     );
   }
 
   getDistinctContracts(array) {
     return array.filter(
       (obj, index, self) =>
-        index === self.findIndex(
+        index ===
+        self.findIndex(
           (t) =>
             t.name === obj.name &&
             t.provider === obj.provider &&
             t.hidrometer === obj.hidrometer &&
-            t.code === obj.code
-        )
+            t.code === obj.code,
+        ),
     );
   }
 }
