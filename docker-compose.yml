@@ -1,24 +1,24 @@
 version: '3.5'
 services:
-
   mysql:
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: admin # Root password
       MYSQL_DATABASE: db         # Optional: Creates a database
-      MYSQL_USER: admin                 # Optional: Creates a new user
-      MYSQL_PASSWORD: admin     # Password for the new user
+      MYSQL_USER: admin          # Optional: Creates a new user
+      MYSQL_PASSWORD: admin      # Password for the new user
     ports:
       - "3306:3306"
     volumes:
       - my-db:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/conf.d/my.cnf  # Mount the custom configuration file
 
   billing-ingestion-service:
     image: node:18-alpine
     volumes:
       - .:/app
     ports:
-      - 3000:3000
+      - "3000:3000"
     entrypoint:
       - 'sh'
       - '-c'
