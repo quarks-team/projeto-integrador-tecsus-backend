@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { EnergyBillGroupA } from '../entity/energy-bill-group-a.entity';
 import { EnergyBillGroupB } from '../entity/energy-bill-group-b.entity';
 import { EnergyBillPayload } from '../request/energy-bill-payload';
@@ -68,20 +68,19 @@ export class IngestEnergyBill {
       });
     });
 
-    console.log('Times before saving:', times);
-
     try {
-      for (const time of this.getDistinctObjects(times)) {
-        const existsTime = await this.timeRepo.findOne({
-          where: {
-            month: time.month,
-            year: time.year,
-          },
-        });
-        if (!existsTime) {
-          await this.timeRepo.save(time);
-        }
-      }
+      const distinctTimes = this.getDistinctObjects(times);
+      const existingTimes = await this.timeRepo.find({
+        where: distinctTimes.map(time => ({
+          month: time.month,
+          year: time.year,
+        })),
+      });
+
+      const existingTimeMap = new Set(existingTimes.map(time => `${time.month}-${time.year}`));
+      const newTimes = distinctTimes.filter(time => !existingTimeMap.has(`${time.month}-${time.year}`));
+
+      await this.timeRepo.save(newTimes);
     } catch (error) {
       console.error('Error saving times:', error);
     }
@@ -89,41 +88,56 @@ export class IngestEnergyBill {
     const distinctBGroupBills = this.getDistinctBills(bGroupBills);
     const distinctAGroupBills = this.getDistinctBills(aGroupBills);
 
-    for (const bBill of distinctBGroupBills) {
-      try {
-        const existsBillb = await this.billGroupBRepo.findOne({
-          where: {
-            month: bBill.month,
-            instalationNumber: bBill.instalationNumber,
-            provider: bBill.provider,
-            plant: bBill.plant
-          },
-        });
-        if (!existsBillb) {
-          await this.billGroupBRepo.save(bBill);
-        }
-      } catch (error) {
-        console.error('Error saving B group bill:', error);
-      }
+    try {
+      const existingBGroupBills = await this.billGroupBRepo.find({
+        where: distinctBGroupBills.map(bBill => ({
+          month: bBill.month,
+          instalationNumber: bBill.instalationNumber,
+          provider: bBill.provider,
+          plant: bBill.plant,
+        })),
+      });
+
+      const existingBGroupBillMap = new Set(existingBGroupBills.map(bBill =>
+        `${bBill.month.getTime()}-${bBill.instalationNumber}-${bBill.provider}-${bBill.plant}`
+      ));
+
+      const newBGroupBills = distinctBGroupBills.filter(bBill =>
+        !existingBGroupBillMap.has(
+          `${bBill.month.getTime()}-${bBill.instalationNumber}-${bBill.provider}-${bBill.plant}`
+        )
+      );
+
+      await this.billGroupBRepo.save(newBGroupBills);
+    } catch (error) {
+      console.error('Error saving B group bills:', error);
     }
 
-    for (const aBill of distinctAGroupBills) {
-      try {
-        const existsBilla = await this.billGroupARepo.findOne({
-          where: {
-            month: aBill.month,
-            instalationNumber: aBill.instalationNumber,
-            provider: aBill.provider,
-            plant: aBill.plant
-          },
-        });
-        console.log('Existing A Group Bill:', existsBilla);
-        if (!existsBilla) {
-          await this.billGroupARepo.save(aBill);
-        }
-      } catch (error) {
-        console.error('Error saving A group bill:', error);
-      }
+    try {
+      const existingAGroupBills = await this.billGroupARepo.find({
+        where: distinctAGroupBills.map(aBill => ({
+          month: aBill.month,
+          instalationNumber: aBill.instalationNumber,
+          provider: aBill.provider,
+          plant: aBill.plant,
+        })),
+      });
+
+      
+
+      const existingAGroupBillMap = new Set(existingAGroupBills.map(aBill =>
+        `${aBill.month.getTime()}-${aBill.instalationNumber}-${aBill.provider}-${aBill.plant}`
+      ));
+
+      const newAGroupBills = distinctAGroupBills.filter(aBill =>
+        !existingAGroupBillMap.has(
+          `${aBill.month.getTime()}-${aBill.instalationNumber}-${aBill.provider}-${aBill.plant}`
+        )
+      );
+
+      await this.billGroupARepo.save(newAGroupBills);
+    } catch (error) {
+      console.error('Error saving A group bills:', error);
     }
   }
 
