@@ -96,20 +96,16 @@ export class IngestEnergyBill {
 
     for (const bBill of distinctBGroupBills) {
       try {
-        const existsBill = await this.billGroupBRepo.findOne({
+        const existsBillb = await this.billGroupBRepo.findOne({
           where: {
             month: bBill.month,
-            total: bBill.total,
             instalationNumber: bBill.instalationNumber,
             provider: bBill.provider,
-            plant: bBill.plant,
-            totalConsume: bBill.totalConsume,
-            sistDistrUse: bBill.sistDistrUse,
-            sistDistrUseCost: bBill.sistDistrUseCost,
+            plant: bBill.plant
           },
         });
-        console.log('Existing B Group Bill:', existsBill);
-        if (!existsBill) {
+        console.log('Existing B Group Bill:', existsBillb);
+        if (!existsBillb) {
           const savedBill = await this.billGroupBRepo.save(bBill);
           console.log('Saved B Group Bill:', savedBill);
         }
@@ -120,27 +116,16 @@ export class IngestEnergyBill {
 
     for (const aBill of distinctAGroupBills) {
       try {
-        const existsBill = await this.billGroupARepo.findOne({
+        const existsBilla = await this.billGroupARepo.findOne({
           where: {
             month: aBill.month,
-            total: aBill.total,
             instalationNumber: aBill.instalationNumber,
             provider: aBill.provider,
-            plant: aBill.plant,
-            ptDemand: aBill.ptDemand,
-            fpCapDemand: aBill.fpCapDemand,
-            fpIndDemand: aBill.fpIndDemand,
-            ptVdConsume: aBill.ptVdConsume,
-            fpCapVdConsume: aBill.fpCapVdConsume,
-            fpIndVdConsume: aBill.fpIndVdConsume,
-            aPtTusdConsume: aBill.aPtTusdConsume,
-            aPtTeConsume: aBill.aPtTeConsume,
-            aFpTusdConsume: aBill.aFpTusdConsume,
-            aFpTeConsume: aBill.aFpTeConsume,
+            plant: aBill.plant
           },
         });
-        console.log('Existing A Group Bill:', existsBill);
-        if (!existsBill) {
+        console.log('Existing A Group Bill:', existsBilla);
+        if (!existsBilla) {
           const savedBill = await this.billGroupARepo.save(aBill);
           console.log('Saved A Group Bill:', savedBill);
         }
