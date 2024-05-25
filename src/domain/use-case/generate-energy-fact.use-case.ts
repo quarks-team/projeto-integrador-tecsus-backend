@@ -48,7 +48,7 @@ export class GenerateEnergyFact {
         c.contrato_energia_id,
         l.local_planta_id,
         COALESCE(conta_a.total_conta_energia, conta_b.total_conta_energia) AS total_conta_energia,
-        conta_b.uso_sist_distr AS consumo_total_b,
+        conta_b.consumo_total AS consumo_total_b,
         (conta_a.consumo_pt_vd + conta_a.consumo_fp_cap_vd + conta_a.consumo_fp_ind_vd + conta_a.consumo_a_pt_tusd + conta_a.consumo_a_pt_te + conta_a.consumo_a_fp_tusd + conta_a.consumo_a_fp_te) AS consumo_total_a,
         conta_a.demanda_pt,
         conta_a.demanda_fp_cap,
