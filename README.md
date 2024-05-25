@@ -92,6 +92,13 @@ O projeto será estruturado em 4 épicos, nos quais serão atribuídas as respec
 
 <p align="right">(<a href="#top">Scroll to top</a>)</p>
 
+<br><br>
+
+## Doc para buid da aplicação:
+
+- [tutorial](https://github.com/quarks-team/projeto-integrador-tecsus-backend/blob/origin/main/docs/API5-81-buildBackendAppTutorial/docs/TUTORIALBUILD.md)
+
+
 ## Tecnologias utilizadas
 
 <details>
