@@ -18,6 +18,12 @@ import { EnergyFact } from 'src/domain/entity/energy-fact.entity';
 import { GenerateEnergyFact } from 'src/domain/use-case/generate-energy-fact.use-case';
 import { WatterFact } from 'src/domain/entity/watter-fact.entity';
 import { GenerateWatterFact } from 'src/domain/use-case/generate-watter-fact.use-case';
+import { AlertController } from './alert.controller';
+import { WatterAlert } from 'src/domain/entity/watter-alerts.entity';
+import { AlertService } from 'src/domain/service/alert.service';
+import { WastepipeAlert } from 'src/domain/entity/wastepipe-alert.entity';
+import { AEnergyConsumeAlert } from 'src/domain/entity/a-energy-alerts.entity';
+import { BEnergyConsumeAlert } from '../domain/entity/b-energy-alerts.entity';
 
 @Module({
   imports: [
@@ -31,8 +37,12 @@ import { GenerateWatterFact } from 'src/domain/use-case/generate-watter-fact.use
     TypeOrmModule.forFeature([Time]),
     TypeOrmModule.forFeature([EnergyFact]),
     TypeOrmModule.forFeature([WatterFact]),
+    TypeOrmModule.forFeature([WatterAlert]),
+    TypeOrmModule.forFeature([WastepipeAlert]),
+    TypeOrmModule.forFeature([AEnergyConsumeAlert]),
+    TypeOrmModule.forFeature([BEnergyConsumeAlert]),
   ],
-  controllers: [BillingController],
+  controllers: [BillingController, AlertController],
   providers: [
     BillingService,
     IngestWatterContract,
@@ -41,6 +51,7 @@ import { GenerateWatterFact } from 'src/domain/use-case/generate-watter-fact.use
     IngestWatterBill,
     GenerateEnergyFact,
     GenerateWatterFact,
+    AlertService,
   ],
   exports: [],
 })
