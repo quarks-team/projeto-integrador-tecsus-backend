@@ -31,5 +31,4 @@ export class EnergyBillGroupB {
 
   @Column({ name: 'uso_sist_distr_custo' })
   sistDistrUseCost: number;
-  
 }

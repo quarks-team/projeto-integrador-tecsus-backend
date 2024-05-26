@@ -49,5 +49,4 @@ export class EnergyBillGroupA {
 
   @Column({ name: 'consumo_a_fp_te' })
   aFpTeConsume: number;
-
 }

@@ -1,10 +1,12 @@
 import {
   Controller,
-  Get,
   Post,
   UploadedFiles,
   UseInterceptors,
+  Res,
+  Get,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { BillingService } from 'src/domain/service/billing.service';
 import * as path from 'path';
@@ -16,15 +18,48 @@ export class BillingController {
 
   @Post('upload')
   @UseInterceptors(FilesInterceptor('files'))
-  async putFile(@UploadedFiles() files: Express.Multer.File[]) {
+  async uploadFiles(
+    @UploadedFiles() files: Express.Multer.File[],
+    @Res() res: Response,
+  ) {
     const folderPath = path.join(__dirname, 'files');
-
     await mkdir(folderPath, { recursive: true });
 
-    for (const file of files) {
+    const filePromises = files.map(async (file) => {
       const filePath = path.join(folderPath, file.originalname);
       await writeFile(filePath, file.buffer);
       await this.service.transform(file.originalname, filePath);
+
+      // Emite um evento de progresso para o SSE
+      if (global.sseResponse) {
+        global.sseResponse.write(
+          `data: ${JSON.stringify({
+            message: `O arquivo "${file.originalname}" foi processado com sucesso.`,
+          })}\n\n`,
+        );
+      }
+    });
+
+    await Promise.all(filePromises);
+
+    // Emite um evento de conclusão para o SSE
+    if (global.sseResponse) {
+      global.sseResponse.end();
     }
+
+    res
+      .status(200)
+      .json({ message: 'Todos os arquivos foram processados com sucesso.' });
+  }
+
+  @Get('upload/sse')
+  sse(@Res() res: Response) {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
+
+    // Armazena a resposta SSE globalmente para ser usada pelo endpoint de upload
+    global.sseResponse = res;
   }
 }
