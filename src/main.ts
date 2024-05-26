@@ -1,14 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config';
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const port = app.get(ConfigService).get('port');
   intanceSwagger(app);
-  await app.listen(port);
+  app.enableCors({
+    origin: 'http://localhost:5173', // Permission just for the frontend port
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: false,
+  });
+  await app.listen(3000);
 }
 bootstrap();
 

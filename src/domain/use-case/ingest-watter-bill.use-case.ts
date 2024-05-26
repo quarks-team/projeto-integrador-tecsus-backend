@@ -7,7 +7,8 @@ import { WatterBillPayload } from '../request/watter-bill-payload';
 export class IngestWatterBill {
   constructor(
     @InjectRepository(Time) private readonly timeRepo: Repository<Time>,
-    @InjectRepository(WatterBill) private readonly billRepo: Repository<WatterBill>,
+    @InjectRepository(WatterBill)
+    private readonly billRepo: Repository<WatterBill>,
   ) {}
 
   async execute(watterBills: WatterBillPayload[]) {
@@ -34,7 +35,7 @@ export class IngestWatterBill {
         ),
         total: Number.parseFloat(bill['Total R$'].replace(',', '')),
         plant: bill.Planta,
-        provider: "null"
+        provider: 'null',
       });
 
       times.push({
@@ -47,13 +48,17 @@ export class IngestWatterBill {
       const distinctTimes = this.getDistinctObjects(times);
       const existingTimes = await this.timeRepo.find({
         where: {
-          month: In(distinctTimes.map(time => time.month)),
-          year: In(distinctTimes.map(time => time.year)),
+          month: In(distinctTimes.map((time) => time.month)),
+          year: In(distinctTimes.map((time) => time.year)),
         },
       });
 
-      const existingTimeMap = new Set(existingTimes.map(time => `${time.month}-${time.year}`));
-      const newTimes = distinctTimes.filter(time => !existingTimeMap.has(`${time.month}-${time.year}`));
+      const existingTimeMap = new Set(
+        existingTimes.map((time) => `${time.month}-${time.year}`),
+      );
+      const newTimes = distinctTimes.filter(
+        (time) => !existingTimeMap.has(`${time.month}-${time.year}`),
+      );
 
       await this.timeRepo.save(newTimes);
     } catch (error) {
@@ -63,7 +68,7 @@ export class IngestWatterBill {
     try {
       const distinctBills = this.getDistinctBills(bills);
       const existingBills = await this.billRepo.find({
-        where: distinctBills.map(bill => ({
+        where: distinctBills.map((bill) => ({
           rgiCode: bill.rgiCode,
           billDate: bill.billDate,
           hidrometer: bill.hidrometer,
@@ -71,14 +76,18 @@ export class IngestWatterBill {
         })),
       });
 
-      const existingBillMap = new Set(existingBills.map(bill =>
-        `${bill.rgiCode}-${bill.billDate.getTime()}-${bill.hidrometer}-${bill.plant}`
-      ));
+      const existingBillMap = new Set(
+        existingBills.map(
+          (bill) =>
+            `${bill.rgiCode}-${bill.billDate.getTime()}-${bill.hidrometer}-${bill.plant}`,
+        ),
+      );
 
-      const newBills = distinctBills.filter(bill =>
-        !existingBillMap.has(
-          `${bill.rgiCode}-${bill.billDate.getTime()}-${bill.hidrometer}-${bill.plant}`
-        )
+      const newBills = distinctBills.filter(
+        (bill) =>
+          !existingBillMap.has(
+            `${bill.rgiCode}-${bill.billDate.getTime()}-${bill.hidrometer}-${bill.plant}`,
+          ),
       );
 
       await this.billRepo.save(newBills);
@@ -90,20 +99,22 @@ export class IngestWatterBill {
   getDistinctObjects(array) {
     return array.filter(
       (obj, index, self) =>
-        index === self.findIndex((t) => t.month === obj.month && t.year === obj.year)
+        index ===
+        self.findIndex((t) => t.month === obj.month && t.year === obj.year),
     );
   }
 
   getDistinctBills(array) {
     return array.filter(
       (obj, index, self) =>
-        index === self.findIndex(
+        index ===
+        self.findIndex(
           (t) =>
             t.rgiCode === obj.rgiCode &&
             t.billDate.getTime() === obj.billDate.getTime() &&
             t.hidrometer === obj.hidrometer &&
-            t.plant === obj.plant
-        )
+            t.plant === obj.plant,
+        ),
     );
   }
 }
