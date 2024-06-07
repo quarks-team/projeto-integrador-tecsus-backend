@@ -9,10 +9,11 @@ export class TypeormService implements TypeOrmOptionsFactory {
 
   async createTypeOrmOptions(): Promise<TypeOrmModuleOptions> {
     const db = this.configService.get('db');
+    console.log(db);
     return {
       type: 'mysql',
       host: db.host,
-      port: 3306,
+      port: db.port,
       username: db.username,
       password: db.password,
       database: 'db',
