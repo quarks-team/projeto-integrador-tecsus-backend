@@ -18,10 +18,7 @@ export class BillingController {
 
   @Post('upload')
   @UseInterceptors(FilesInterceptor('files'))
-  async uploadFiles(
-    @UploadedFiles() files: Express.Multer.File[],
-    @Res() res: Response,
-  ) {
+  async uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
     const folderPath = path.join(__dirname, 'files');
     await mkdir(folderPath, { recursive: true });
 
@@ -47,9 +44,7 @@ export class BillingController {
       global.sseResponse.end();
     }
 
-    res
-      .status(200)
-      .json({ message: 'Todos os arquivos foram processados com sucesso.' });
+    return { message: 'Todos os arquivos foram processados com sucesso.' };
   }
 
   @Get('upload/sse')

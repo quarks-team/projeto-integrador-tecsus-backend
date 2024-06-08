@@ -1,54 +1,55 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import * as path from 'path';
-import { AppModule } from '../../src/app.module';
-import { join } from 'path';
-import * as fs from 'fs';
-import { mkdirSync, rmdirSync } from 'fs';
-import { after } from 'node:test';
+import { BillingController } from './billing.controller';
+import { BillingService } from './../domain/service/billing.service';
+import { GenerateEnergyFact } from '../domain/use-case/generate-energy-fact.use-case';
+import { GenerateWatterFact } from '../domain/use-case/generate-watter-fact.use-case';
+import { IngestEnergyBill } from '../domain/use-case/ingest-energy-bill.use-case';
+import { IngestEnergyContract } from '../domain/use-case/ingest-energy-contract.use-case';
+import { IngestWatterBill } from '../domain/use-case/ingest-watter-bill.use-case';
+import { IngestWatterContract } from '../domain/use-case/ingest-watter-contracts.use-case';
+import { ConfigService } from '@nestjs/config';
 
-describe('BillingController (e2e)', () => {
-  let app: INestApplication;
-  const testFolderPath = join(__dirname, '..', 'src', 'files');
+describe('BillingController', () => {
+  let billingService: BillingService;
 
-  beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+  beforeEach(async () => {
+    const app: TestingModule = await Test.createTestingModule({
+      imports: [],
+      controllers: [BillingController],
+      providers: [
+        BillingService,
+        IngestWatterContract,
+        IngestEnergyContract,
+        IngestEnergyBill,
+        IngestWatterBill,
+        GenerateEnergyFact,
+        GenerateWatterFact,
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn((key: string) => {
+              // this is being super extra, in the case that you need multiple keys with the `get` method
+              if (key === 'FOO') {
+                return 123;
+              }
+              return null;
+            }),
+          },
+        },
+      ],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    await app.init();
-
-    // Cria o diretório de teste se não existir
-    if (!fs.existsSync(testFolderPath)) {
-      mkdirSync(testFolderPath,{recursive: true});
-    }
+    billingService = app.get<BillingService>(BillingService);
   });
 
-  afterAll(async () => {
-    await app.close();
-
-    // Remove o diretório de teste após os testes
-    if (fs.existsSync(testFolderPath)) {
-      rmdirSync(testFolderPath, { recursive: true });
-    }
-  });
-
-  it('/billing/upload (POST) - should upload CSV files and process data', async () => {
-    const filePath = path.join(__dirname, 'test.csv');
-
-    const response = await request(app.getHttpServer())
-      .post('/billing/upload')
-      .attach('files', filePath);
-
-    expect(response.status).toBe(200);
-    expect(response.body.message).toBe(
-      'Todos os arquivos foram processados com sucesso.',
-    );
-
-    // Verifica se o arquivo foi salvo no diretório correto
-    const savedFilePath = path.join(testFolderPath, 'sample.csv');
-    expect(fs.existsSync(savedFilePath)).toBe(true);
+  describe('root', () => {
+    it('should return "Hello World!"', () => {
+      expect(
+        billingService.transform(
+          'con_agua',
+          `/Users/lucas.barcelos/dev/fatec/billing-ingestion-service/src/files/con_agua.csv`,
+        ),
+      ).toBe('Hello World!');
+    });
   });
 });
