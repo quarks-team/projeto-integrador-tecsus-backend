@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { IngestWatterContract } from './ingest-watter-contracts.use-case';
+import { IngestWatterContract } from '../../src/domain/use-case/ingest-watter-contracts.use-case';
 import { Repository } from 'typeorm';
-import { Unity } from '../entity/unity.entity';
+import { Unity } from '../../src/domain/entity/unity.entity';
 import { MockType } from 'src/test-utils/utils';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { WatterContract } from '../entity/watter-contract.entity';
-import { PlacePlant } from '../entity/place_plant.entity';
+import { WatterContract } from '../../src/domain/entity/watter-contract.entity';
+import { PlacePlant } from '../../src/domain/entity/place_plant.entity';
 
 describe('BillingController', () => {
   const unity: Unity = { cnpj: '12034', id: 1 };
@@ -21,22 +21,12 @@ describe('BillingController', () => {
   let useCase: IngestWatterContract;
   let unityRepo: Repository<Unity>;
   let watterRepo: Repository<WatterContract>;
-  const platRepositoryMockFactory: () => MockType<Repository<any>> = jest.fn(
-    () => ({
-      findOne: jest.fn(() => [placePlant]),
-      find: jest.fn(() => [placePlant]),
-      save: jest.fn((entity) => entity),
-      // ...
-    }),
-  );
-  const watterRepositoryMockFactory: () => MockType<Repository<any>> = jest.fn(
-    () => ({
-      findOne: jest.fn(() => [watterContract]),
-      find: jest.fn(() => [watterContract]),
-      save: jest.fn((entity) => entity),
-      // ...
-    }),
-  );
+
+  const repositoryMockFactory: () => MockType<Repository<any>> = jest.fn(() => ({
+    findOne: jest.fn().mockResolvedValue(undefined),
+    find: jest.fn(),
+    save: jest.fn().mockResolvedValue(undefined),
+  }));
 
   const watterContracts = [
     {
@@ -94,15 +84,15 @@ describe('BillingController', () => {
       providers: [
         {
           provide: getRepositoryToken(Unity),
-          useClass: Repository,
+          useFactory: repositoryMockFactory,
         },
         {
           provide: getRepositoryToken(WatterContract),
-          useClass: Repository,
+          useFactory: repositoryMockFactory,
         },
         {
           provide: getRepositoryToken(PlacePlant),
-          useFactory: watterRepositoryMockFactory,
+          useFactory: repositoryMockFactory,
         },
         IngestWatterContract,
       ],
@@ -116,11 +106,12 @@ describe('BillingController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', async () => {
+    it('should return the expected contracts and unitys', async () => {
       jest.spyOn(unityRepo, 'find').mockResolvedValueOnce([unity]);
       jest.spyOn(watterRepo, 'find').mockResolvedValueOnce([watterContract]);
-      const repoSpy = jest.spyOn(watterRepo, 'save');
-      const teste = jest.spyOn(unityRepo, 'save');
+      const repoSpy = jest.spyOn(watterRepo, 'save').mockResolvedValueOnce(watterContract);
+      const teste = jest.spyOn(unityRepo, 'save').mockResolvedValueOnce(unity);
+
       expect(await useCase.execute(watterContracts)).toEqual({
         contracts: [
           {
@@ -133,16 +124,27 @@ describe('BillingController', () => {
         ],
         unitys: [{ cnpj: '356817029' }],
       });
-      expect(repoSpy).toBe([
-        {
+
+      expect(repoSpy).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            cnpj: '356817029',
+            code: '0394852346',
+            hidrometer: 'B14S001048',
+            name: 'TAUBATE/SP - VILA DAS GRAÇAS',
+            provider: 'SABESP',
+          }),
+        ])
+      );
+      
+
+      expect(teste).toHaveBeenCalledWith(
+        expect.arrayContaining([
+        expect.objectContaining({
           cnpj: '356817029',
-          code: '0394852346',
-          hidrometer: 'B14S001048',
-          name: 'TAUBATE/SP - VILA DAS GRAÇAS',
-          provider: 'SABESP',
-        },
-      ]);
-      expect(teste).toHaveBeenCalledWith({});
+        }),
+      ])
+      );
     });
   });
 });
