@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v1.0.0...v1.1.0) (2024-06-12)
+
+
+### Features
+
+* logs to user knows about ETL process clearly ([d8f0560](https://github.com/quarks-team/projeto-integrador-tecsus-backend/commit/d8f0560dee5bd34b1fe2346fdf48d472ace24194))
+
 # 1.0.0 (2024-06-11)
 
 
