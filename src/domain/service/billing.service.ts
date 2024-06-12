@@ -21,54 +21,87 @@ export class BillingService {
     private readonly generateEnergyFact: GenerateEnergyFact,
     private readonly generateWatterFact: GenerateWatterFact,
   ) {}
-  async transform(fileName: string, path: string): Promise<string> {
+
+  async transform(
+    fileName: string,
+    path: string,
+    log: (message: string, technical?: boolean) => void,
+  ): Promise<string> {
     let bills = [];
 
-    await csvToJson()
-      .fromFile(path)
-      .then((obj) => {
-        bills = obj;
-      });
+    log(`${fileName}: Iniciando o processo de transformação ETL...`);
+
+    log(`${fileName}: Carregando dados do arquivo.`);
+    try {
+      const obj = await csvToJson().fromFile(path);
+
+      bills = obj;
+
+      log(`${fileName}: Dados carregados com sucesso.`);
+    } catch (error: any) {
+      log(`${fileName}: Erro ao carregar dados: ` + error.message, true);
+      throw new Error(`${fileName}: Falha ao carregar dados do arquivo.`);
+    }
 
     const name = fileName.substring(0, fileName.length - 4);
 
-    switch (name) {
-      case 'con_agua':
-        const watterContracts: WatterContractPayload[] = bills;
-        await this.ingestWatterContract.execute(watterContracts);
-        await this.generateWatterFact.execute();
-        break;
-      case 'con_energia':
-        const energyContracts: EnergyContractPayload[] = bills;
-        await this.ingestEnergyContract.execute(energyContracts);
-        await this.generateEnergyFact.execute();
-        break;
-      case 'pro_energia':
-        const energyBills: EnergyBillPayload[] = bills;
-        await this.ingestEnergyBill.execute(energyBills);
-        await this.generateEnergyFact.execute();
-        break;
-      case 'pro_agua':
-        const watterBills: WatterBillPayload[] = bills;
-        await this.ingestWatterBill.execute(watterBills);
-        await this.generateWatterFact.execute();
-        break;
-      default:
-        throw new Error('Invalid file name or type.');
+    log(`${fileName}: Identificando o tipo de arquivo: ` + name);
+    try {
+      switch (name) {
+        case 'con_agua':
+          log(`${fileName}: Processando contratos de água...`);
+          const watterContracts: WatterContractPayload[] = bills;
+          await this.ingestWatterContract.execute(watterContracts);
+          log(
+            `${fileName}: Contratos de água processados com sucesso. Tabelas dimensão atualizadas.`
+          );
+          log(`${fileName}: Gerando tabela fato de água...`);
+          await this.generateWatterFact.execute();
+          log(`${fileName}: Tabela fato de água gerada com sucesso.`);
+          break;
+        case 'con_energia':
+          log(`${fileName}: Processando contratos de energia...`);
+          const energyContracts: EnergyContractPayload[] = bills;
+          await this.ingestEnergyContract.execute(energyContracts);
+          log(
+            `${fileName}: Contratos de energia processados com sucesso. Tabelas dimensão atualizadas.`,
+          );
+          log(`${fileName}: Gerando tabela de fato de energia...`);
+          await this.generateEnergyFact.execute();
+          log(`${fileName}: Tabela fato de energia gerada com sucesso.`);
+          break;
+        case 'pro_energia':
+          log(`${fileName}: Processando contas de energia...`);
+          const energyBills: EnergyBillPayload[] = bills;
+          await this.ingestEnergyBill.execute(energyBills);
+          log(
+            `${fileName}: Contas de energia processadas com sucesso. Tabelas dimensão atualizadas.`
+          );
+          log(`${fileName}: Gerando tabela fato de energia...`);
+          await this.generateEnergyFact.execute();
+          log(`${fileName}: Tabela fato de energia gerado com sucesso.`);
+          break;
+        case 'pro_agua':
+          log(`${fileName}: Processando contas de água...`);
+          const watterBills: WatterBillPayload[] = bills;
+          await this.ingestWatterBill.execute(watterBills);
+          log(
+            `${fileName}: Contas de água processadas com sucesso. Tabelas dimensão atualizadas.`
+          );
+          log(`${fileName}: Gerando tabela fato de água...`);
+          await this.generateWatterFact.execute();
+          log(`${fileName}: Tabela fato de água gerados com sucesso.`);
+          break;
+        default:
+        log(`${fileName}: Tipo de arquivo inválido.`);
+          throw new Error(`${fileName}: Nome ou tipo de arquivo inválido.`);
+      }
+
+      log(`${fileName}: Processo de ETL no arquivo concluído com sucesso.`);
+      return 'billing-ingestion: hmm good ingestion';
+    } catch (error) {
+      log(`${fileName}: Erro no processo de ETL: ` + error.message);
+      throw error;
     }
-
-    return 'billing-ingestion: hmm good ingestion';
-  }
-
-  parseObj(obj: any[]): any {
-    const first = obj[0];
-    const keys = Object.keys(first);
-    const dictionary = keys.map((key) => {
-      return {
-        key: key,
-        type: typeof first[key],
-      };
-    });
-    return dictionary;
   }
 }
