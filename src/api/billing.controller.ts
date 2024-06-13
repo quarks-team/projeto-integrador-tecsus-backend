@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { BillingService } from 'src/domain/service/billing.service';
+import { BillingService } from '../domain/service/billing.service';
 import * as path from 'path';
 import { mkdir, writeFile } from 'fs/promises';
 
@@ -18,10 +18,7 @@ export class BillingController {
 
   @Post('upload')
   @UseInterceptors(FilesInterceptor('files'))
-  async uploadFiles(
-    @UploadedFiles() files: Express.Multer.File[],
-    @Res() res: Response,
-  ) {
+  async uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
     const folderPath = path.join(__dirname, 'files');
     await mkdir(folderPath, { recursive: true });
 
@@ -61,9 +58,7 @@ export class BillingController {
       global.sseResponse.end();
     }
 
-    res
-      .status(200)
-      .json({ message: 'Todos os arquivos foram processados com sucesso.' });
+    return { message: 'Todos os arquivos foram processados com sucesso.' };
   }
 
   @Get('upload/sse')
