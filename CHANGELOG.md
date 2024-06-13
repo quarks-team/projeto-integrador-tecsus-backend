@@ -1,3 +1,17 @@
+# [2.0.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v1.1.0...v2.0.0) (2024-06-13)
+
+
+### Tests
+
+* 💍 adding end to end test ([476d30b](https://github.com/quarks-team/projeto-integrador-tecsus-backend/commit/476d30b1033e8d07586db3ca409cbdf88ccd5391))
+* 💍 ajust test ([2a5bf2b](https://github.com/quarks-team/projeto-integrador-tecsus-backend/commit/2a5bf2ba15c333f5b7e0463d51573ddd70717398))
+
+
+### BREAKING CHANGES
+
+* 🧨 no
+* 🧨 no
+
 # [1.1.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v1.0.0...v1.1.0) (2024-06-12)
 
 
