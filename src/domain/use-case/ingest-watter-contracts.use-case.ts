@@ -109,6 +109,11 @@ export class IngestWatterContract {
     } catch (error) {
       console.error('Error saving contracts:', error);
     }
+
+    return {
+      unitys,
+      contracts,
+    };
   }
 
   mergeCNPJs(contract: WatterContractPayload): string {
