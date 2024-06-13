@@ -25,12 +25,21 @@ export class BillingController {
     const filePromises = files.map(async (file) => {
       const filePath = path.join(folderPath, file.originalname);
       await writeFile(filePath, file.buffer);
-      await this.service.transform(file.originalname, filePath);
 
-      // Emite um evento de progresso para o SSE
+      const log = (message: string) => {
+        if (global.sseResponse) {
+          global.sseResponse.write(
+            `event: user-log\ndata: ${JSON.stringify({ message })}\n\n`,
+          );
+        }
+      };
+
+      await this.service.transform(file.originalname, filePath, log);
+
+      // Emit an event of process progress friendly for SSE
       if (global.sseResponse) {
         global.sseResponse.write(
-          `data: ${JSON.stringify({
+          `event: user-log\ndata: ${JSON.stringify({
             message: `O arquivo "${file.originalname}" foi processado com sucesso.`,
           })}\n\n`,
         );
@@ -39,8 +48,13 @@ export class BillingController {
 
     await Promise.all(filePromises);
 
-    // Emite um evento de conclusão para o SSE
+    // Emit a conclusion event for SSE
     if (global.sseResponse) {
+      global.sseResponse.write(
+        `event: user-log\ndata: ${JSON.stringify({
+          message: 'Todos os arquivos foram processados com sucesso.',
+        })}\n\n`,
+      );
       global.sseResponse.end();
     }
 
@@ -54,7 +68,6 @@ export class BillingController {
     res.setHeader('Connection', 'keep-alive');
     res.flushHeaders();
 
-    // Armazena a resposta SSE globalmente para ser usada pelo endpoint de upload
     global.sseResponse = res;
   }
 }
