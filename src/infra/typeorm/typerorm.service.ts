@@ -12,7 +12,7 @@ export class TypeormService implements TypeOrmOptionsFactory {
     return {
       type: 'mysql',
       host: db.host,
-      port: 3306,
+      port: db.port,
       username: db.username,
       password: db.password,
       database: 'db',
