@@ -24,6 +24,8 @@ import { AlertService } from '../domain/service/alert.service';
 import { WastepipeAlert } from '../domain/entity/wastepipe-alert.entity';
 import { AEnergyConsumeAlert } from '../domain/entity/a-energy-alerts.entity';
 import { BEnergyConsumeAlert } from '../domain/entity/b-energy-alerts.entity';
+import { EnergyDemandAlert } from '../domain/entity/demand-alerts.entity';
+
 
 @Module({
   imports: [
@@ -41,6 +43,7 @@ import { BEnergyConsumeAlert } from '../domain/entity/b-energy-alerts.entity';
     TypeOrmModule.forFeature([WastepipeAlert]),
     TypeOrmModule.forFeature([AEnergyConsumeAlert]),
     TypeOrmModule.forFeature([BEnergyConsumeAlert]),
+    TypeOrmModule.forFeature([EnergyDemandAlert]),
   ],
   controllers: [BillingController, AlertController],
   providers: [

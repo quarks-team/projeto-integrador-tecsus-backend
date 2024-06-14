@@ -250,18 +250,17 @@ CREATE TABLE alertas_consumo_energia_b (
 -- alertas de demanda para enegia tipo A
 CREATE TABLE `alertas_demanda_energia` (
     `alerta_id` INT AUTO_INCREMENT PRIMARY KEY,
-    `contrato_energia_id` INT NOT NULL,
-    `unidade_cliente_id` INT NOT NULL,
-    `local_planta_id` INT NOT NULL,
-    `data_alerta` DATE NOT NULL,
-    `demanda_pt` FLOAT(10, 2) NOT NULL,
-    `demanda_ponta` FLOAT(10, 2) NOT NULL,
-    `demanda_fp_cap` FLOAT(10, 2) NOT NULL,
-    `demanda_fp_ind` FLOAT(10, 2) NOT NULL,
-    `demanda_fora_ponta` FLOAT(10, 2) NOT NULL,
+    `contrato_energia_id` INT  NULL,
+    `unidade_cliente_id` INT  NULL,
+    `local_planta_id` INT  NULL,
+    `data_alerta` DATE NULL,
+    `demanda_pt` FLOAT(10, 2)  NULL,
+    `demanda_ponta` FLOAT(10, 2)  NULL,
+    `demanda_fp_cap` FLOAT(10, 2)  NULL,
+    `demanda_fp_ind` FLOAT(10, 2) NULL,
+    `demanda_fora_ponta` FLOAT(10, 2)  NULL,
     `excesso_percentual_pt` FLOAT(10, 2) NULL,
-    `excesso_percentual_fp` FLOAT(10, 2) NULL
-);
+    `excesso_percentual_fp` FLOAT(10, 2) NULL);
 
 
 -- Create function
