@@ -9,7 +9,8 @@ while ! mysqladmin ping -h"localhost" --silent; do
 done
 
 # Run initial setup commands without requiring a password
-mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "SET GLOBAL log_bin_trust_function_creators = 1;"
+# shellcheck disable=SC1073
+mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "SET GLOBAL log_bin_trust_function_creators = 1;"
 
 # Keep the container running with an interactive bash shell
 tail -f /dev/null

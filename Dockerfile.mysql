@@ -8,18 +8,18 @@ ENV MYSQL_USER=admin
 ENV MYSQL_PASSWORD=admin
 ENV MYSQL_ALLOW_EMPTY_PASSWORD=yes
 
+# Copy the entrypoint script
+COPY entrypoint.sh /usr/local/bin/
+
 # Copy the initialization script
-# COPY init.sql /docker-entrypoint-initdb.d/
-
- ## Copy the entrypoint script 
-
-# COPY entrypoint.sh /usr/local/bin/
+COPY 1-tables.sql /docker-entrypoint-initdb.d/
+COPY 2-functions_and_triggers.sql /docker-entrypoint-initdb.d/
 
 # Make the entrypoint script executable
-# RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Use the custom entrypoint script
-# ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
- # Expose the MySQL port
+# Expose the MySQL port
 EXPOSE 3306
