@@ -1,3 +1,15 @@
+# [5.0.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v4.0.0...v5.0.0) (2024-06-14)
+
+
+### Bug Fixes
+
+* 🐛 railway deploy ([87137cd](https://github.com/quarks-team/projeto-integrador-tecsus-backend/commit/87137cdf1f645e8d1808b7fc08a51167382981af))
+
+
+### BREAKING CHANGES
+
+* 🧨 No
+
 # [4.0.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v3.0.0...v4.0.0) (2024-06-14)
 
 
