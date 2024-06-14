@@ -1,3 +1,15 @@
+# [4.0.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v3.0.0...v4.0.0) (2024-06-14)
+
+
+### Bug Fixes
+
+* 🐛 db envs use on typeorm service connection ([58a90ed](https://github.com/quarks-team/projeto-integrador-tecsus-backend/commit/58a90edf07db9562a54f21bb44c61a10d6dccf52))
+
+
+### BREAKING CHANGES
+
+* 🧨 no
+
 # [3.0.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v2.0.0...v3.0.0) (2024-06-14)
 
 
