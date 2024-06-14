@@ -1,3 +1,15 @@
+# [3.0.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v2.0.0...v3.0.0) (2024-06-14)
+
+
+### Bug Fixes
+
+* 🐛 ajust billing dockerfile ([66db79f](https://github.com/quarks-team/projeto-integrador-tecsus-backend/commit/66db79f4708157ec32c2e3bfafef62c3c20dad8b))
+
+
+### BREAKING CHANGES
+
+* 🧨 no
+
 # [2.0.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v1.1.0...v2.0.0) (2024-06-13)
 
 
