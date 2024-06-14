@@ -247,6 +247,22 @@ CREATE TABLE alertas_consumo_energia_b (
     excesso_percentual DECIMAL(8, 2)
 );
 
+-- alertas de demanda para enegia tipo A
+CREATE TABLE `alertas_demanda_energia` (
+    `alerta_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `contrato_energia_id` INT  NULL,
+    `unidade_cliente_id` INT  NULL,
+    `local_planta_id` INT  NULL,
+    `data_alerta` DATE NULL,
+    `demanda_pt` FLOAT(10, 2)  NULL,
+    `demanda_ponta` FLOAT(10, 2)  NULL,
+    `demanda_fp_cap` FLOAT(10, 2)  NULL,
+    `demanda_fp_ind` FLOAT(10, 2) NULL,
+    `demanda_fora_ponta` FLOAT(10, 2)  NULL,
+    `excesso_percentual_pt` FLOAT(10, 2) NULL,
+    `excesso_percentual_fp` FLOAT(10, 2) NULL);
+
+
 -- Create function
 DELIMITER //
 
@@ -458,6 +474,71 @@ BEGIN
             media_trimestral_b,
             ((NEW.consumo_total_b - media_trimestral_b) / media_trimestral_b) * 100
         );
+    END IF;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER trg_CheckDemandaEnergiaA
+AFTER INSERT ON fato_conta_energia
+FOR EACH ROW
+BEGIN
+    DECLARE data_consumo DATE;
+    DECLARE excesso_percentual_pt FLOAT(10, 2);
+    DECLARE excesso_percentual_fp FLOAT(10, 2);
+
+    -- Initialize the excess percentage variables
+    SET excesso_percentual_pt = NULL;
+    SET excesso_percentual_fp = NULL;
+
+    -- Obtém a data de consumo com base no tempo_id
+    SELECT get_last_day_of_month(tempo_mes, tempo_ano) INTO data_consumo
+    FROM tempo
+    WHERE tempo_id = NEW.tempo_id;
+
+    -- Verifica se a conta de energia A existe
+    IF NEW.conta_energia_a_id IS NOT NULL THEN
+        -- Calcula o excesso percentual para demanda_pt se demanda_ponta não for zero
+        IF NEW.demanda_ponta > 0 AND NEW.demanda_pt > NEW.demanda_ponta * 1.30 THEN
+            SET excesso_percentual_pt = ((NEW.demanda_pt - NEW.demanda_ponta) / NEW.demanda_ponta) * 100;
+        END IF;
+
+        -- Calcula o excesso percentual para demanda_fp_cap + demanda_fp_ind se demanda_fora_ponta não for zero
+        IF NEW.demanda_fora_ponta > 0 AND NEW.demanda_fp_cap + NEW.demanda_fp_ind > NEW.demanda_fora_ponta * 1.30 THEN
+            SET excesso_percentual_fp = ((NEW.demanda_fp_cap + NEW.demanda_fp_ind - NEW.demanda_fora_ponta) / NEW.demanda_fora_ponta) * 100;
+        END IF;
+
+        -- Insere um alerta se qualquer das condições forem verdadeiras
+        IF excesso_percentual_pt IS NOT NULL OR excesso_percentual_fp IS NOT NULL THEN
+            INSERT INTO alertas_demanda_energia (
+                contrato_energia_id,
+                unidade_cliente_id,
+                local_planta_id,
+                data_alerta,
+                demanda_pt,
+                demanda_ponta,
+                demanda_fp_cap,
+                demanda_fp_ind,
+                demanda_fora_ponta,
+                excesso_percentual_pt,
+                excesso_percentual_fp
+            )
+            VALUES (
+                NEW.contrato_energia_id,
+                NEW.unidade_cliente_id,
+                NEW.local_planta_id,
+                data_consumo,
+                NEW.demanda_pt,
+                NEW.demanda_ponta,
+                NEW.demanda_fp_cap,
+                NEW.demanda_fp_ind,
+                NEW.demanda_fora_ponta,
+                excesso_percentual_pt,
+                excesso_percentual_fp
+            );
+        END IF;
     END IF;
 END //
 
