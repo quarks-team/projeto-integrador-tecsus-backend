@@ -7,12 +7,16 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   intanceSwagger(app);
   app.enableCors({
-    origin: 'http://localhost:5173', // Permission just for the frontend port
+    origin: [
+      'https://quarks-team.github.io', // Frontend in production
+      'http://localhost:5173', // Frontend excuted locallly
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: false,
   });
   await app.listen(3000);
 }
+
 bootstrap();
 
 function intanceSwagger(app: INestApplication) {
