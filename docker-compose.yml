@@ -9,14 +9,14 @@ services:
     volumes:
       - my-db:/var/lib/mysql
 
-  # billing-ingestion-service:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.billing
-  #   volumes:
-  #     - .:/app
-  #   ports:
-  #     - 3000:3000
-
+  billing-ingestion-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.billing
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    
 volumes:
   my-db:
