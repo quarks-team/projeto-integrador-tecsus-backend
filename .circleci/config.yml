@@ -26,12 +26,6 @@ jobs:
             docker push $DOCKERHUB_USER/tecsus_backend-mysql
 
       - run:
-          name: Update CA Certificates
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y ca-certificates
-
-      - run:
           name: Install Railway CLI
           command: |
             curl -sSL https://railway.app/install.sh | sh
