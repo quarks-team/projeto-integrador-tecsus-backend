@@ -20,10 +20,10 @@ jobs:
           name: Push Docker Images to Registry
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin
-            docker tag tecsus_backend-billing-ingestion-service:latest $DOCKERHUB_USER/tecsus_backend-billing-ingestion-service:latest
-            docker push $DOCKERHUB_USER/tecsus_backend-billing-ingestion-service:latest
-            docker tag tecsus_backend-mysql:latest $DOCKERHUB_USER/tecsus_backend-mysql:latest
-            docker push $DOCKERHUB_USER/tecsus_backend-mysql:latest
+            docker tag tecsus_backend-billing-ingestion-service:latest $DOCKERHUB_USER/tecsus_backend-billing-ingestion-service
+            docker push $DOCKERHUB_USER/tecsus_backend-billing-ingestion-service
+            docker tag tecsus_backend-mysql:latest $DOCKERHUB_USER/tecsus_backend-mysql
+            docker push $DOCKERHUB_USER/tecsus_backend-mysql
 
       - run:
           name: Deploy to Railway
