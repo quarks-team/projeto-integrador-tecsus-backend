@@ -33,10 +33,9 @@ jobs:
 
       - run:
           name: Authenticate Railway
-          environment:
-            RAILWAY_TOKEN: $RAILWAY_TOKEN
           command: |
-            railway login $RAILWAY_TOKEN
+            export RAILWAY_TOKEN=$RAILWAY_TOKEN
+            echo $RAILWAY_TOKEN | railway login --service-token
 
       - run:
           name: Deploy to Railway
