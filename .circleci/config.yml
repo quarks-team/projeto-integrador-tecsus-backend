@@ -36,7 +36,7 @@ jobs:
           environment:
             RAILWAY_TOKEN: $RAILWAY_TOKEN
           command: |
-            railway login --service-token $RAILWAY_TOKEN
+            railway login $RAILWAY_TOKEN
 
       - run:
           name: Deploy to Railway
