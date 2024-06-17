@@ -1,18 +1,41 @@
 # Base image
 FROM node:lts-alpine
 
+# Install jq
+RUN apk add --no-cache jq
+
 # Create app directory
 WORKDIR /usr/src/app
 
-# Install app dependencies
+# Copy package.json and yarn.lock first to leverage Docker cache
 COPY package.json yarn.lock ./
 
-RUN yarn install --frozen-lockfile
+# Install TypeScript, ts-node and @types/node globally
+RUN yarn global add typescript ts-node @types/node
 
+# Set NODE_PATH to include global node_modules
+ENV NODE_PATH=/usr/local/share/.config/yarn/global/node_modules
+
+# Copy the necessary files
 COPY . .
 
-# Creates a "dist" folder with the production build
+# Install the development dependency @types/node
+RUN yarn add @types/node --dev
+
+# Add the preinstall script to package.json using jq
+RUN jq '.scripts.preinstall = "node set-permissions.cjs"' package.json > temp.json && mv temp.json package.json
+
+# Add the postbuild script to package.json using jq
+RUN jq '.scripts.postbuild = "node set-permissions.cjs"' package.json > temp.json && mv temp.json package.json
+
+# Install project dependencies
+RUN yarn install --frozen-lockfile
+
+# Build the project
 RUN yarn build
+
+# Fix imports in the built files
+RUN node fix-imports.cjs
 
 # Start the server using the production build
 CMD [ "node", "dist/main.js" ]

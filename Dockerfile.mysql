@@ -1,25 +1,52 @@
-# Dockerfile for MySQL
+# Use the official MySQL image as a base
 FROM mysql:latest
 
-# Set environment variables
+# Set environment variables for MySQL
 ENV MYSQL_ROOT_PASSWORD=admin
 ENV MYSQL_DATABASE=db
 ENV MYSQL_USER=admin
 ENV MYSQL_PASSWORD=admin
 ENV MYSQL_ALLOW_EMPTY_PASSWORD=yes
 
-# Copy the initialization script
-# COPY init.sql /docker-entrypoint-initdb.d/
+# Install necessary packages
+RUN microdnf install -y wget && \
+    wget -qO- https://rpm.nodesource.com/setup_14.x | bash - && \
+    microdnf install -y nodejs && \
+    npm install --global typescript@latest ts-node@latest @types/node@latest
 
- ## Copy the entrypoint script 
+# Create app directory for set-permissions-docker script
+WORKDIR /app
 
-# COPY entrypoint.sh /usr/local/bin/
+# Copy package.json and yarn.lock if they exist for cache dependencies
+COPY package.json yarn.lock ./
 
-# Make the entrypoint script executable
-# RUN chmod +x /usr/local/bin/entrypoint.sh
+# Copy the set-permissions-docker script
+COPY set-permissions-docker.cjs ./
+
+# Copy the entrypoint script
+COPY entrypoint.sh /usr/local/bin/
+
+# Copy the healthcheck script
+COPY healthcheck.sh /usr/local/bin/
+
+# Convert scripts to Unix format
+RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh && \
+    sed -i 's/\r$//' /usr/local/bin/healthcheck.sh
+
+# Run the permissions script to make entrypoint.sh and healthcheck.sh executable
+RUN node set-permissions-docker.cjs
+
+# Copy the initialization scripts
+COPY 1-tables.sql /docker-entrypoint-initdb.d/
+
+# Copy the functions and triggers script separately
+COPY 2-functions_and_triggers.sql /docker-entrypoint-initdb.d/2-functions_and_triggers.sql
 
 # Use the custom entrypoint script
-# ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
- # Expose the MySQL port
+# Add healthcheck
+HEALTHCHECK CMD /usr/local/bin/healthcheck.sh || exit 1
+
+# Expose the MySQL port
 EXPOSE 3306
