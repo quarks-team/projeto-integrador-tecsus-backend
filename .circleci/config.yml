@@ -11,7 +11,6 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      
       - run:
           name: Build Docker Images
           command: docker-compose build
@@ -34,8 +33,10 @@ jobs:
 
       - run:
           name: Authenticate Railway
+          environment:
+            RAILWAY_TOKEN: $RAILWAY_TOKEN
           command: |
-            echo $RAILWAY_TOKEN | railway login
+            railway login --service-token $RAILWAY_TOKEN
 
       - run:
           name: Deploy to Railway
