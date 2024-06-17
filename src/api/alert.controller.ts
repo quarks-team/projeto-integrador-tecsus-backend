@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { AlertService } from 'src/domain/service/alert.service';
+import { AlertService } from '../domain/service/alert.service';
 
 @Controller('alerts')
 export class AlertController {

@@ -5,7 +5,7 @@ services:
     image: imurmurhash
     build:
       context: node_modules/imurmurhash
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.billing
     environment:
       NODE_ENV: development
     ports:

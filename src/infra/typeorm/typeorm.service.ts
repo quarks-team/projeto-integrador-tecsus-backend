@@ -4,18 +4,18 @@ import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { getMetadataArgsStorage } from 'typeorm';
 
 @Injectable()
-export class TypeormService implements TypeOrmOptionsFactory {
+export class TypeOrmService implements TypeOrmOptionsFactory {
   constructor(private readonly configService: ConfigService) {}
 
-  async createTypeOrmOptions(): Promise<TypeOrmModuleOptions> {
-    const db = this.configService.get('db');
+  createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       type: 'mysql',
-      host: db.host,
-      port: 3306,
-      username: db.username,
-      password: db.password,
-      database: 'db',
+      host: this.configService.get<string>('DATABASE_HOST'),
+      port:
+        parseInt(this.configService.get<string>('DATABASE_PORT'), 10) || 3306,
+      username: this.configService.get<string>('DATABASE_USER'),
+      password: this.configService.get<string>('DATABASE_PASSWORD'),
+      database: this.configService.get<string>('DATABASE_NAME'),
       entities: getMetadataArgsStorage().tables.map((tbl) => tbl.target),
       autoLoadEntities: true,
       synchronize: true,

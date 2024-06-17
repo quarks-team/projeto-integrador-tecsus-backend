@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { BillingService } from 'src/domain/service/billing.service';
+import { BillingService } from '../domain/service/billing.service';
 import * as path from 'path';
 import { mkdir, writeFile } from 'fs/promises';
 
