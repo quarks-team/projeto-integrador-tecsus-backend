@@ -20,9 +20,9 @@ jobs:
           name: Push Docker Images to Registry
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin
-            docker tag tecsus_backend-billing-ingestion-service:latest $DOCKERHUB_USER/tecsus_backend-billing-ingestion-service
+            docker tag tecsusbackend-billing:latest $DOCKERHUB_USER/tecsus_backend-billing-ingestion-service
             docker push $DOCKERHUB_USER/tecsus_backend-billing-ingestion-service
-            docker tag tecsus_backend-mysql:latest $DOCKERHUB_USER/tecsus_backend-mysql
+            docker tag tecsusbackend-mysql:latest $DOCKERHUB_USER/tecsus_backend-mysql
             docker push $DOCKERHUB_USER/tecsus_backend-mysql
 
       - run:
