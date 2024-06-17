@@ -26,9 +26,21 @@ jobs:
             docker push $DOCKERHUB_USER/tecsus_backend-mysql
 
       - run:
+          name: Install Railway CLI
+          command: |
+            curl -sSL https://railway.app/install.sh | sh
+            echo 'export PATH="$HOME/.railway/bin:$PATH"' >> $BASH_ENV
+            source $BASH_ENV
+
+      - run:
+          name: Authenticate Railway
+          command: |
+            railway login --token $RAILWAY_TOKEN
+
+      - run:
           name: Deploy to Railway
           command: |
-            railway up
+            railway up --project-id $RAILWAY_PROJECT_ID
 
 workflows:
   version: 2
