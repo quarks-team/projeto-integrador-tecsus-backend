@@ -1,3 +1,10 @@
+## [5.0.1](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v5.0.0...v5.0.1) (2024-06-17)
+
+
+### Bug Fixes
+
+* fix issues in dockerfile deployment ([a4d9a7c](https://github.com/quarks-team/projeto-integrador-tecsus-backend/commit/a4d9a7c4305c88325f0fc16a05dd569bf20f5c8b))
+
 # [5.0.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v4.0.0...v5.0.0) (2024-06-14)
 
 
