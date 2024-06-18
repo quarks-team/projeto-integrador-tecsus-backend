@@ -1,3 +1,15 @@
+# [6.0.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v5.0.0...v6.0.0) (2024-06-18)
+
+
+### Features
+
+* 🎸 add main test ([8de1595](https://github.com/quarks-team/projeto-integrador-tecsus-backend/commit/8de15952e703283d33de2a95366fff56f94d7d87))
+
+
+### BREAKING CHANGES
+
+* 🧨 No
+
 # [5.0.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v4.0.0...v5.0.0) (2024-06-14)
 
 
