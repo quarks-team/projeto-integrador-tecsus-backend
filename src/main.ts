@@ -7,11 +7,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   intanceSwagger(app);
   app.enableCors({
-    origin: 'http://localhost:5173', // Permission just for the frontend port
+    origin: 'quarks-team.github.io',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: false,
   });
-  await app.listen(3000);
+  await app.listen(process.env.PORT);
 }
 bootstrap();
 
