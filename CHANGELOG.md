@@ -1,3 +1,15 @@
+# [7.0.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v6.0.0...v7.0.0) (2024-06-19)
+
+
+### Bug Fixes
+
+* 🐛 fix cors options ([e7bb67b](https://github.com/quarks-team/projeto-integrador-tecsus-backend/commit/e7bb67b41447d0d1b89b6f73130218dc08fbfccb))
+
+
+### BREAKING CHANGES
+
+* 🧨 No
+
 # [6.0.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v5.0.0...v6.0.0) (2024-06-18)
 
 
