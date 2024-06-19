@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   intanceSwagger(app);
   app.enableCors({
-    origin: 'quarks-team.github.io',
+    origin: ['https://quarks-team.github.io', 'http://localhost:5173'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: false,
   });
