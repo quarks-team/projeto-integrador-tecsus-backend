@@ -187,7 +187,15 @@ ALTER TABLE `fato_conta_energia`
 ADD CONSTRAINT `unique_fato_conta_energia`
 UNIQUE (`unidade_cliente_id`, `contrato_energia_id`, `tempo_id`, `conta_energia_b_id`, `conta_energia_a_id`, `local_planta_id`);
 
--- Creating tables related to the alert components
+
+
+
+
+-- Creating tables, triggers and functions related to the alert components
+
+
+
+
 
 -- Table: alertas_consumo_agua
 CREATE TABLE alertas_consumo_agua (
@@ -236,3 +244,19 @@ CREATE TABLE alertas_consumo_energia_b (
     media_trimestral DECIMAL(8, 2),
     excesso_percentual DECIMAL(8, 2)
 );
+
+-- alertas de demanda para enegia tipo A
+CREATE TABLE `alertas_demanda_energia` (
+    `alerta_id` INT AUTO_INCREMENT PRIMARY KEY,
+    `contrato_energia_id` INT  NULL,
+    `unidade_cliente_id` INT  NULL,
+    `local_planta_id` INT  NULL,
+    `data_alerta` DATE NULL,
+    `demanda_pt` FLOAT(10, 2)  NULL,
+    `demanda_ponta` FLOAT(10, 2)  NULL,
+    `demanda_fp_cap` FLOAT(10, 2)  NULL,
+    `demanda_fp_ind` FLOAT(10, 2) NULL,
+    `demanda_fora_ponta` FLOAT(10, 2)  NULL,
+    `excesso_percentual_pt` FLOAT(10, 2) NULL,
+    `excesso_percentual_fp` FLOAT(10, 2) NULL
+    );
