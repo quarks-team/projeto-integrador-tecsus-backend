@@ -50,7 +50,7 @@ jobs:
     strategy:
       fail-fast: false 
       matrix:
-        containers: [1, 2] # Uses 2 parallel instances
+        containers: [1] # Use 1 instance
 
     steps:
 
@@ -96,10 +96,10 @@ jobs:
          done
 
      - name: Run E2E tests
-       run: yarn test:e2e
+       run: yarn test:e2e --detectOpenHandles
 
      - name: Run Integration tests
-       run: yarn test:integration
+       run: yarn test:integration --detectOpenHandles
 
      - name: Stop and remove MySQL container
        if: always()
