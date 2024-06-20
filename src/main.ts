@@ -10,7 +10,7 @@ async function bootstrap() {
   intanceSwagger(app);
   console.log('Swagger set up, enabling CORS...');
   app.enableCors({
-    origin: ['https://quarks-team.github.io', 'http://localhost:5173'],
+    origin: ['https://quarks-team.github.io', 'http://localhost:5173/projeto_integrador_tecsus_frontend/'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: false,
   });
