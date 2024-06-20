@@ -1,25 +1,81 @@
-# Dockerfile for MySQL
-FROM mysql:latest
+# Use the official Debian image as a base
+FROM debian:bullseye
 
-# Set environment variables
+# Set environment variables for MySQL
 ENV MYSQL_ROOT_PASSWORD=admin
 ENV MYSQL_DATABASE=db
 ENV MYSQL_USER=admin
 ENV MYSQL_PASSWORD=admin
 ENV MYSQL_ALLOW_EMPTY_PASSWORD=yes
 
-# Copy the initialization script
-# COPY init.sql /docker-entrypoint-initdb.d/
+# Install necessary packages and MySQL dependencies
+RUN apt-get update && \
+    apt-get install -y wget gnupg curl lsb-release build-essential libaio1 libmecab2 libnuma1 psmisc && \
+    wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-server_8.0.32-1debian11_amd64.deb && \
+    wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-common_8.0.32-1debian11_amd64.deb && \
+    wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-client_8.0.32-1debian11_amd64.deb && \
+    wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-community-server-core_8.0.32-1debian11_amd64.deb && \
+    wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-community-server_8.0.32-1debian11_amd64.deb && \
+    wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-community-client_8.0.32-1debian11_amd64.deb && \
+    wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-community-client-core_8.0.32-1debian11_amd64.deb && \
+    wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-community-client-plugins_8.0.32-1debian11_amd64.deb && \
+    dpkg -i mysql-common_8.0.32-1debian11_amd64.deb && \
+    dpkg -i mysql-community-client-plugins_8.0.32-1debian11_amd64.deb && \
+    dpkg -i mysql-community-client-core_8.0.32-1debian11_amd64.deb && \
+    dpkg -i mysql-community-client_8.0.32-1debian11_amd64.deb && \
+    dpkg -i mysql-client_8.0.32-1debian11_amd64.deb && \
+    dpkg -i mysql-community-server-core_8.0.32-1debian11_amd64.deb && \
+    dpkg -i mysql-community-server_8.0.32-1debian11_amd64.deb && \
+    dpkg -i mysql-server_8.0.32-1debian11_amd64.deb && \
+    apt-get install -f -y && \
+    rm mysql-server_8.0.32-1debian11_amd64.deb mysql-common_8.0.32-1debian11_amd64.deb mysql-client_8.0.32-1debian11_amd64.deb mysql-community-server-core_8.0.32-1debian11_amd64.deb mysql-community-server_8.0.32-1debian11_amd64.deb mysql-community-client_8.0.32-1debian11_amd64.deb mysql-community-client-core_8.0.32-1debian11_amd64.deb mysql-community-client-plugins_8.0.32-1debian11_amd64.deb && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
- ## Copy the entrypoint script 
+# Ensure MySQL directories exist with correct permissions
+RUN mkdir -p /var/lib/mysql /var/run/mysqld /tmp && \
+    chown -R mysql:mysql /var/lib/mysql /var/run/mysqld /tmp
 
-# COPY entrypoint.sh /usr/local/bin/
+# Install NVM and Node.js 20 LTS
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash
 
-# Make the entrypoint script executable
-# RUN chmod +x /usr/local/bin/entrypoint.sh
+# Ensure NVM and Node.js are available for subsequent RUN commands
+ENV NVM_DIR="/root/.nvm"
+ENV NODE_VERSION="20"
+RUN . "$NVM_DIR/nvm.sh" && nvm install $NODE_VERSION && nvm use $NODE_VERSION && nvm alias default $NODE_VERSION && \
+    npm install --global typescript@latest ts-node@latest @types/node@latest
+
+# Create app directory for set-permissions-docker script
+WORKDIR /app
+
+# Copy package.json and yarn.lock if they exist for cache dependencies
+COPY package.json yarn.lock ./
+
+# Copy the set-permissions-docker script
+COPY set-permissions-docker.cjs ./
+
+# Copy the entrypoint script
+COPY entrypoint.sh /usr/local/bin/
+
+# Copy the healthcheck script
+COPY healthcheck.sh /usr/local/bin/
+
+# Convert scripts to Unix format
+RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh && \
+    sed -i 's/\r$//' /usr/local/bin/healthcheck.sh
+
+# Run the permissions script to make entrypoint.sh and healthcheck.sh executable
+RUN . "$NVM_DIR/nvm.sh" && node set-permissions-docker.cjs
+
+# Copy the initialization scripts
+COPY 1-tables.sql /docker-entrypoint-initdb.d/1-tables.sql 
+COPY 2-functions_and_triggers.sql /docker-entrypoint-initdb.d/2-functions_and_triggers.sql
 
 # Use the custom entrypoint script
-# ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
- # Expose the MySQL port
+# Add healthcheck
+HEALTHCHECK CMD /usr/local/bin/healthcheck.sh || exit 1
+
+# Expose the MySQL port
 EXPOSE 3306
