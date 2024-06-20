@@ -1,7 +1,5 @@
 # API 5° Semestre - Quarks Team
 
-[![CircleCI](https://dl.circleci.com/status-badge/img/circleci/EmCNkCZy1VGLzK5TiMkEx1/FZLvoJ31gcvtfmTeorkhCM/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/circleci/EmCNkCZy1VGLzK5TiMkEx1/FZLvoJ31gcvtfmTeorkhCM/tree/main)
-
 ## Tema
 
 Dashboard Web de Análise de Faturas de Energia e Água
