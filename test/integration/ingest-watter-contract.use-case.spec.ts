@@ -141,11 +141,11 @@ describe('BillingController', () => {
       expect(teste).toHaveBeenCalledWith(
         expect.arrayContaining([
         expect.objectContaining({
-          cnpj: '356817029',
+          cnpj: '35687029',
         }),
       ])
       );
     });
-    
+
   });
 });
