@@ -146,5 +146,6 @@ describe('BillingController', () => {
       ])
       );
     });
+    
   });
 });
