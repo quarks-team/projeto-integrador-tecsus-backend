@@ -1,3 +1,10 @@
+## [7.0.1](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v7.0.0...v7.0.1) (2024-06-20)
+
+
+### Bug Fixes
+
+* fix issues in dockerfile deployment ([a4d9a7c](https://github.com/quarks-team/projeto-integrador-tecsus-backend/commit/a4d9a7c4305c88325f0fc16a05dd569bf20f5c8b))
+
 # [7.0.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v6.0.0...v7.0.0) (2024-06-19)
 
 
