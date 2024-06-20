@@ -96,10 +96,10 @@ jobs:
          done
 
      - name: Run E2E tests
-       run: yarn test:e2e --detectOpenHandles
+       run: yarn test:e2e --detectOpenHandles --forceExit
 
      - name: Run Integration tests
-       run: yarn test:integration --detectOpenHandles
+       run: yarn test:integration --detectOpenHandles --forceExit
 
      - name: Stop and remove MySQL container
        if: always()
