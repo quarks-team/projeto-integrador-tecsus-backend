@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import csvToJson from 'csvtojson';
+import * as csvToJson from 'csvtojson';
 import { WatterContractPayload } from '../request/watter-contract-payload';
 import { EnergyContractPayload } from '../request/energy-contract-payload';
 import { EnergyBillPayload } from '../request/energy-bill-payload';
@@ -53,7 +53,7 @@ export class BillingService {
           const watterContracts: WatterContractPayload[] = bills;
           await this.ingestWatterContract.execute(watterContracts);
           log(
-            `${fileName}: Contratos de água processados com sucesso. Tabelas dimensão atualizadas.`,
+            `${fileName}: Contratos de água processados com sucesso. Tabelas dimensão atualizadas.`
           );
           log(`${fileName}: Gerando tabela fato de água...`);
           await this.generateWatterFact.execute();
@@ -75,7 +75,7 @@ export class BillingService {
           const energyBills: EnergyBillPayload[] = bills;
           await this.ingestEnergyBill.execute(energyBills);
           log(
-            `${fileName}: Contas de energia processadas com sucesso. Tabelas dimensão atualizadas.`,
+            `${fileName}: Contas de energia processadas com sucesso. Tabelas dimensão atualizadas.`
           );
           log(`${fileName}: Gerando tabela fato de energia...`);
           await this.generateEnergyFact.execute();
@@ -86,21 +86,22 @@ export class BillingService {
           const watterBills: WatterBillPayload[] = bills;
           await this.ingestWatterBill.execute(watterBills);
           log(
-            `${fileName}: Contas de água processadas com sucesso. Tabelas dimensão atualizadas.`,
+            `${fileName}: Contas de água processadas com sucesso. Tabelas dimensão atualizadas.`
           );
           log(`${fileName}: Gerando tabela fato de água...`);
           await this.generateWatterFact.execute();
           log(`${fileName}: Tabela fato de água gerados com sucesso.`);
           break;
         default:
-          log(`${fileName}: Tipo de arquivo inválido.`);
+        log(`${fileName}: Tipo de arquivo inválido.`);
           throw new Error(`${fileName}: Nome ou tipo de arquivo inválido.`);
       }
 
       log(`${fileName}: Processo de ETL no arquivo concluído com sucesso.`);
       return 'billing-ingestion: hmm good ingestion';
-    } catch (error: unknown) {
-      log(`${fileName}: Erro no processo de ETL: ` + (error as Error)?.message);
+    } catch (error) {
+      log(`${fileName}: Erro no processo de ETL: ` + error.message);
+      throw error;
     }
   }
 }
