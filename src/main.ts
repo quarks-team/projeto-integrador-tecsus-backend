@@ -10,17 +10,11 @@ async function bootstrap() {
   intanceSwagger(app);
   console.log('Swagger set up, enabling CORS...');
   app.enableCors({
-    origin: [
-      'https://quarks-team.github.io', // Frontend in production
-      'http://localhost:5173', // Frontend executed locally
-    ],
+    origin: ['https://quarks-team.github.io', 'http://localhost:5173'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: false,
   });
-  const port = process.env.PORT || 3000;
-  console.log(`Listening on port ${port}...`);
-  await app.listen(port);
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  await app.listen(process.env.PORT);
 }
 
 bootstrap();
