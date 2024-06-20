@@ -14,7 +14,10 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: false,
   });
-  await app.listen(process.env.PORT);
+  const port = process.env.PORT || 3000;
+  console.log(`Listening on port ${port}...`);
+  await app.listen(port);
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 
 bootstrap();

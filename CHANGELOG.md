@@ -10,24 +10,7 @@
 
 ### Bug Fixes
 
-* 🐛 fix cors options ([e7bb67b](https://github.com/quarks-team/projeto-integrador-tecsus-backend/commit/e7bb67b41447d0d1b89b6f73130218dc08fbfccb))
-
-
-### BREAKING CHANGES
-
-* 🧨 No
-
-# [6.0.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v5.0.0...v6.0.0) (2024-06-18)
-
-
-### Features
-
-* 🎸 add main test ([8de1595](https://github.com/quarks-team/projeto-integrador-tecsus-backend/commit/8de15952e703283d33de2a95366fff56f94d7d87))
-
-
-### BREAKING CHANGES
-
-* 🧨 No
+* fix issues in dockerfile deployment ([a4d9a7c](https://github.com/quarks-team/projeto-integrador-tecsus-backend/commit/a4d9a7c4305c88325f0fc16a05dd569bf20f5c8b))
 
 # [5.0.0](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v4.0.0...v5.0.0) (2024-06-14)
 
