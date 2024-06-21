@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { IngestWatterContract } from '../../src/domain/use-case/ingest-watter-contracts.use-case';
 import { Repository } from 'typeorm';
 import { Unity } from '../../src/domain/entity/unity.entity';
-import { MockType } from 'src/test-utils/utils';
+import { MockType } from '../unit/test-utils/utils';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { WatterContract } from '../../src/domain/entity/watter-contract.entity';
 import { PlacePlant } from '../../src/domain/entity/place_plant.entity';
