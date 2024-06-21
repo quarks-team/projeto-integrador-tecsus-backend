@@ -53,7 +53,7 @@ export class BillingService {
           const watterContracts: WatterContractPayload[] = bills;
           await this.ingestWatterContract.execute(watterContracts);
           log(
-            `${fileName}: Contratos de água processados com sucesso. Tabelas dimensão atualizadas.`
+            `${fileName}: Contratos de água processados com sucesso. Tabelas dimensão atualizadas.`,
           );
           log(`${fileName}: Gerando tabela fato de água...`);
           await this.generateWatterFact.execute();
@@ -75,7 +75,7 @@ export class BillingService {
           const energyBills: EnergyBillPayload[] = bills;
           await this.ingestEnergyBill.execute(energyBills);
           log(
-            `${fileName}: Contas de energia processadas com sucesso. Tabelas dimensão atualizadas.`
+            `${fileName}: Contas de energia processadas com sucesso. Tabelas dimensão atualizadas.`,
           );
           log(`${fileName}: Gerando tabela fato de energia...`);
           await this.generateEnergyFact.execute();
@@ -86,14 +86,14 @@ export class BillingService {
           const watterBills: WatterBillPayload[] = bills;
           await this.ingestWatterBill.execute(watterBills);
           log(
-            `${fileName}: Contas de água processadas com sucesso. Tabelas dimensão atualizadas.`
+            `${fileName}: Contas de água processadas com sucesso. Tabelas dimensão atualizadas.`,
           );
           log(`${fileName}: Gerando tabela fato de água...`);
           await this.generateWatterFact.execute();
           log(`${fileName}: Tabela fato de água gerados com sucesso.`);
           break;
         default:
-        log(`${fileName}: Tipo de arquivo inválido.`);
+          log(`${fileName}: Tipo de arquivo inválido.`);
           throw new Error(`${fileName}: Nome ou tipo de arquivo inválido.`);
       }
 

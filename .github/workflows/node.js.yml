@@ -40,8 +40,51 @@ jobs:
           path: ./dist
           key: ${{ runner.os }}-node-20-nest-build-${{ hashFiles('**/dist/**') }}
 
-      - name: Test the build
+      - name: Run Unit Tests of the build
         run: yarn test
+      
+      - name: Run Unit Tests Coverage of the build
+        run: yarn test:cov
+        
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Install SonarQube Scanner
+        run: yarn install-sonar-scanner
+
+      - name: Execute sonar-scanner at the project and save in SonarCloud
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=quarks-team_projeto-integrador-tecsus-backend \
+            -Dsonar.organization=quarks-team \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+      - name: Publish Unit tests results
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-tests-results
+          path: test-results/unit
+      
+      - name: Publish Coverage Unit Tests results
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-coverage-results
+          path: coverage/unit
+
+      - name: Publish SonarQube scanner results
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonar-scanner-results
+          path: .scannerwork/
+
 
   run-integration-tests:
     runs-on: ubuntu-latest
@@ -100,6 +143,24 @@ jobs:
 
      - name: Run Integration tests
        run: yarn test:integration --detectOpenHandles --forceExit
+
+     - name: Publish E2E tests results
+       uses: actions/upload-artifact@v4
+       with:
+         name: e2e-tests-results
+         path: test-results/e2e
+
+     - name: Publish integration tests results
+       uses: actions/upload-artifact@v4
+       with:
+         name: integration-tests-results
+         path: test-results/integration
+
+     - name: Publish integration tests coverage results
+       uses: actions/upload-artifact@v4
+       with:
+         name: integration-coverage-results
+         path: coverage/integration
 
      - name: Stop and remove MySQL container
        if: always()

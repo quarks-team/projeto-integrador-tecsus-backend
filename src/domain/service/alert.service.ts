@@ -30,7 +30,7 @@ export class AlertService {
       wastepipe: [],
       energyA: [],
       energyB: [],
-      demandEnergy: []
+      demandEnergy: [],
     };
     alerts.watter = await this.watterAlertRepo.find();
     alerts.wastepipe = await this.wastepipeAlertRepo.find();

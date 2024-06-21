@@ -1,16 +1,16 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  rootDir: '../test/integration',
+  rootDir: '../test/unit',
   testMatch: ['**/*.spec.ts'],
-  coverageDirectory: 'coverage/integration',
+  coverageDirectory: 'coverage/unit',
   collectCoverageFrom: ['**/*.ts'],
   reporters: [
     'default',
     [
       'jest-junit',
       {
-        outputDirectory: './test-results/integration',
+        outputDirectory: './test-results/unit',
         outputName: 'junit.xml',
       },
     ],

@@ -22,11 +22,13 @@ describe('BillingController', () => {
   let unityRepo: Repository<Unity>;
   let watterRepo: Repository<WatterContract>;
 
-  const repositoryMockFactory: () => MockType<Repository<any>> = jest.fn(() => ({
-    findOne: jest.fn().mockResolvedValue(undefined),
-    find: jest.fn(),
-    save: jest.fn().mockResolvedValue(undefined),
-  }));
+  const repositoryMockFactory: () => MockType<Repository<any>> = jest.fn(
+    () => ({
+      findOne: jest.fn().mockResolvedValue(undefined),
+      find: jest.fn(),
+      save: jest.fn().mockResolvedValue(undefined),
+    }),
+  );
 
   const watterContracts = [
     {
@@ -109,7 +111,9 @@ describe('BillingController', () => {
     it('should return the expected contracts and unitys', async () => {
       jest.spyOn(unityRepo, 'find').mockResolvedValueOnce([unity]);
       jest.spyOn(watterRepo, 'find').mockResolvedValueOnce([watterContract]);
-      const repoSpy = jest.spyOn(watterRepo, 'save').mockResolvedValueOnce(watterContract);
+      const repoSpy = jest
+        .spyOn(watterRepo, 'save')
+        .mockResolvedValueOnce(watterContract);
       const teste = jest.spyOn(unityRepo, 'save').mockResolvedValueOnce(unity);
 
       expect(await useCase.execute(watterContracts)).toEqual({
@@ -134,16 +138,15 @@ describe('BillingController', () => {
             name: 'TAUBATE/SP - VILA DAS GRAÇAS',
             provider: 'SABESP',
           }),
-        ])
+        ]),
       );
-      
 
       expect(teste).toHaveBeenCalledWith(
         expect.arrayContaining([
-        expect.objectContaining({
-          cnpj: '356817029',
-        }),
-      ])
+          expect.objectContaining({
+            cnpj: '356817029',
+          }),
+        ]),
       );
     });
   });

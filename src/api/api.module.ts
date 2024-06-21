@@ -26,7 +26,6 @@ import { AEnergyConsumeAlert } from '../domain/entity/a-energy-alerts.entity';
 import { BEnergyConsumeAlert } from '../domain/entity/b-energy-alerts.entity';
 import { EnergyDemandAlert } from '../domain/entity/demand-alerts.entity';
 
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([Unity]),
