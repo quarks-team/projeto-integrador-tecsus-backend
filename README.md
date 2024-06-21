@@ -140,3 +140,5 @@ O projeto será estruturado em 4 épicos, nos quais serão atribuídas as respec
 ## Licença
 
 Este projeto está licenciado sob a [MIT License](LICENSE).
+
+---
