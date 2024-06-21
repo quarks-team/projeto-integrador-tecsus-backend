@@ -46,26 +46,26 @@ jobs:
       - name: Run Unit Tests Coverage of the build
         run: yarn test:cov
         
-      - name: Setup Java 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: 'temurin'
+      # - name: Setup Java 17
+      #   uses: actions/setup-java@v4
+      #   with:
+      #     java-version: 17
+      #     distribution: 'temurin'
 
-      - name: Install SonarQube Scanner
-        run: yarn install-sonar-scanner
+      # - name: Install SonarQube Scanner
+      #   run: yarn install-sonar-scanner
 
-      - name: Execute sonar-scanner at the project and save in SonarCloud
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=quarks-team_projeto-integrador-tecsus-backend \
-            -Dsonar.organization=quarks-team \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      # - name: Execute sonar-scanner at the project and save in SonarCloud
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #   run: |
+      #     sonar-scanner \
+      #       -Dsonar.projectKey=quarks-team_projeto-integrador-tecsus-backend \
+      #       -Dsonar.organization=quarks-team \
+      #       -Dsonar.host.url=https://sonarcloud.io \
+      #       -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+      #       -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+      #       -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
       - name: Publish Unit tests results
         uses: actions/upload-artifact@v4
@@ -79,11 +79,11 @@ jobs:
           name: unit-coverage-results
           path: coverage/unit
 
-      - name: Publish SonarQube scanner results
-        uses: actions/upload-artifact@v4
-        with:
-          name: sonar-scanner-results
-          path: .scannerwork/
+      # - name: Publish SonarQube scanner results
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: sonar-scanner-results
+      #     path: .scannerwork/
 
 
   run-integration-tests:
