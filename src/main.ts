@@ -10,6 +10,7 @@ async function bootstrap() {
     origin: [
       'https://quarks-team.github.io',
       'http://localhost:5173/projeto_integrador_tecsus_frontend/',
+      'http://localhost:5173'
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: false,
