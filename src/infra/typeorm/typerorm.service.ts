@@ -18,7 +18,7 @@ export class TypeormService implements TypeOrmOptionsFactory {
       database: 'db',
       entities: getMetadataArgsStorage().tables.map((tbl) => tbl.target),
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
       logging: true,
     };
   }
