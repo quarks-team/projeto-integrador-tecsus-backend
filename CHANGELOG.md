@@ -1,3 +1,10 @@
+## [7.0.2](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v7.0.1...v7.0.2) (2024-06-22)
+
+
+### Bug Fixes
+
+* changing synchronize ([2c379f1](https://github.com/quarks-team/projeto-integrador-tecsus-backend/commit/2c379f140a3f3f053a828f549b72e0e30d7d629d))
+
 ## [7.0.1](https://github.com/quarks-team/projeto-integrador-tecsus-backend/compare/v7.0.0...v7.0.1) (2024-06-20)
 
 
